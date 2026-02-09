@@ -1,0 +1,8 @@
+{
+    "prolog.executablePath": "C:/Program Files/swipl/bin/swipl-win.exe",  
+    "prolog.terminal.runtimeArgs": [],
+    "prolog.linter.run": "onSave",
+    "files.associations": {
+      "*.pl": "prolog"
+    }
+  }
