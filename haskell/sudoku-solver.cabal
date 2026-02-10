@@ -1,0 +1,75 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.38.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           sudoku-solver
+version:        0.1.0.0
+synopsis:       Sudoku solver using pure functional programming
+description:    Please see the README on GitHub at <https://github.com/Ericthered123/sudoku-comparative-study/blob/main/haskell/README.md>
+category:       Education
+homepage:       https://github.com/Ericthered123/sudoku-comparative-study#readme
+bug-reports:    https://github.com/Ericthered123/sudoku-comparative-study/issues
+author:         Eric Doyle , Bruno Lodeiro
+maintainer:     eric6doyle@gmail.com
+copyright:      2026 Eric Doyle
+license:        BSD3
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/Ericthered123/sudoku-comparative-study
+
+library
+  exposed-modules:
+      Sudoku
+      Solver
+      Types
+      Utils
+  other-modules:
+      Paths_sudoku_solver
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      array
+    , base >=4.7 && <5
+    , containers
+    , time
+  default-language: Haskell2010
+
+executable sudoku-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_sudoku_solver
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      array
+    , base >=4.7 && <5
+    , containers
+    , sudoku-solver
+    , time
+  default-language: Haskell2010
+
+test-suite sudoku-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_sudoku_solver
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      QuickCheck
+    , array
+    , base >=4.7 && <5
+    , containers
+    , hspec
+    , sudoku-solver
+    , time
+  default-language: Haskell2010

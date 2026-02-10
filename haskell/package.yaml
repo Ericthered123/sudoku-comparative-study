@@ -1,0 +1,67 @@
+feat(haskell): initial implementation of the sudoku solver in Haskell , there are some printing issues , maybe we should enforce the use of ASCII to ensure consistent understandable output, also the IDE may mark some errors but its because i couldnt get the IDE to recognize stack therefore some errors are not real , independently of what the IDE says the project compiles and runs when u use the commands stack build and stack run , so there is no issue in ignoring those remarks.
+version:             0.1.0.0
+github:              "Ericthered123/sudoku-comparative-study"
+license:             BSD3
+author:              "Eric Doyle , Bruno Lodeiro"
+maintainer:          "eric6doyle@gmail.com"
+copyright:           "2026 Eric Doyle"
+
+extra-source-files:
+- README.md
+
+# Metadata usado cuando se publica el paquete
+synopsis:            Sudoku solver using pure functional programming
+category:            Education
+
+# Descripción del proyecto
+description:         Please see the README on GitHub at <https://github.com/Ericthered123/sudoku-comparative-study/blob/main/haskell/README.md>
+
+# Global dependencies (inherited by library, exe and tests)
+dependencies:
+  - base >= 4.7 && < 5
+  - array
+  - containers
+  - time
+
+ghc-options:
+  - -Wall
+  - -Wcompat
+  - -Widentities
+  - -Wincomplete-record-updates
+  - -Wincomplete-uni-patterns
+  - -Wmissing-export-lists
+  - -Wmissing-home-modules
+  - -Wpartial-fields
+  - -Wredundant-constraints
+
+library:
+  source-dirs: src
+  exposed-modules:
+  - Sudoku
+  - Solver
+  - Types
+  - Utils
+
+executables:
+  sudoku-exe:
+    main:                Main.hs
+    source-dirs:         app
+    dependencies:
+      - sudoku-solver
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+
+tests:
+  sudoku-test:
+    main:                Spec.hs
+    source-dirs:         test
+    dependencies:
+      - sudoku-solver
+      - hspec
+      - QuickCheck
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
