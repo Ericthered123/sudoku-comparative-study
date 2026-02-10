@@ -28,6 +28,7 @@ import Data.Array
 import Data.List (minimumBy, sortBy)
 import Data.Ord (comparing)
 import Types
+import Data.Maybe (Maybe(Nothing))
 
 -- | Estrategias de resolución
 data SolveStrategy 
@@ -37,7 +38,9 @@ data SolveStrategy
 
 -- | Resuelve un Sudoku usando backtracking con estrategia por defecto
 solve :: Board -> Maybe Board
-solve = solveWithStrategy FirstEmpty
+solve board
+      | not (isValid board) = Nothing  -- Already resolved
+      | otherwise = solveWithStrategy FirstEmpty board
 
 -- | Resuelve un Sudoku usando una estrategia específica
 solveWithStrategy :: SolveStrategy -> Board -> Maybe Board

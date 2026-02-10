@@ -6,16 +6,19 @@ Copyright   : (c) 2026 Eric Doyle
 
 module Main (main) where
 
-import Sudoku
+import Sudoku     
 import System.Environment (getArgs)
 import System.Exit (exitFailure)
 import Text.Printf (printf)
-import System.IO
+import System.IO 
+import GHC.IO.Encoding (setLocaleEncoding)
 
 
 main :: IO ()
 main = do
+    setLocaleEncoding utf8
     hSetEncoding stdout utf8
+    hSetEncoding stderr utf8
     hSetEncoding stdin utf8
     args <- getArgs
     case args of
@@ -33,34 +36,36 @@ runInteractive = do
     putStrLn "║     SUDOKU SOLVER - HASKELL            ║"
     putStrLn "╚════════════════════════════════════════╝"
     putStrLn ""
-    putStrLn "Seleccione un ejemplo:"
-    putStrLn "  1. Fácil"
-    putStrLn "  2. Medio"
-    putStrLn "  3. Difícil"
+    putStrLn "Please select an example:"
+    putStrLn "  1. Easy (FirstEmpty)"
+    putStrLn "  2. Medio (FirstEmpty)"
+    putStrLn "  3. Medio (MostConstrained)"
+    putStrLn "  4. Dificil (MostConstrained)"
     putStrLn ""
-    putStr "Opción (1-3): "
+    putStr "Opcion (1-4): "
     
     option <- getLine
     case option of
-        "1" -> solveAndPrint "FÁCIL" exampleEasy FirstEmpty
-        "2" -> solveAndPrint "MEDIO" exampleMedium FirstEmpty
-        "3" -> solveAndPrint "DIFÍCIL" exampleHard MostConstrained
-        _ -> putStrLn "Opción inválida" >> exitFailure
+        "1" -> solveAndPrint "FACIL (FirstEmpty)" exampleEasy FirstEmpty
+        "2" -> solveAndPrint "MEDIO (FirstEmpty)" exampleMedium FirstEmpty
+        "3" -> solveAndPrint "MEDIO (MostConstrained)" exampleMedium MostConstrained
+        "4" -> solveAndPrint "DIFICIL (MostConstrained)" exampleHard MostConstrained
+        _ -> putStrLn "Opcion invalida" >> exitFailure
 
 -- | Ejecuta un ejemplo específico
 runExample :: String -> IO ()
 runExample level = case level of
-    "easy" -> solveAndPrint "FÁCIL" exampleEasy FirstEmpty
+    "easy" -> solveAndPrint "FACIL" exampleEasy FirstEmpty
     "medium" -> solveAndPrint "MEDIO" exampleMedium FirstEmpty
-    "hard" -> solveAndPrint "DIFÍCIL" exampleHard MostConstrained
-    _ -> putStrLn "Nivel inválido. Use: easy, medium, hard" >> exitFailure
+    "hard" -> solveAndPrint "DIFICIL" exampleHard MostConstrained
+    _ -> putStrLn "Nivel invalido. Use: easy, medium, hard" >> exitFailure
 
 -- | Lee y resuelve un sudoku desde archivo
 runFromFile :: FilePath -> IO ()
 runFromFile path = do
     maybeBoard <- readBoardFromFile path
     case maybeBoard of
-        Nothing -> putStrLn "Error: Formato de archivo inválido" >> exitFailure
+        Nothing -> putStrLn "Error: Formato de archivo invalido" >> exitFailure
         Just board -> solveAndPrint ("ARCHIVO: " ++ path) board FirstEmpty
 
 -- | Ejecuta benchmarks comparando estrategias
@@ -71,9 +76,9 @@ runBenchmark = do
     putStrLn "╚════════════════════════════════════════╝"
     putStrLn ""
     
-    let boards = [ ("Fácil", exampleEasy)
+    let boards = [ ("Facil", exampleEasy)
                  , ("Medio", exampleMedium)
-                 , ("Difícil", exampleHard)
+                 , ("Dificil", exampleHard)
                  ]
     
     mapM_ benchmarkBoard boards
@@ -114,13 +119,13 @@ solveAndPrint name board strategy = do
     
     case result of
         Nothing -> do
-            putStrLn "✗ No se encontró solución"
+            putStrLn "✗ No se encontro solucion"
         Just solution -> do
             printf "✓ Resuelto en %.3f ms (estrategia: %s)\n\n"
                    (realToFrac time * 1000 :: Double)
                    (show strategy)
             putStrLn "╔════════════════════════════════════════╗"
-            putStrLn ("║ SOLUCIÓN:" ++ replicate 29 ' ' ++ "║")
+            putStrLn ("║ SOLUCION:" ++ replicate 29 ' ' ++ "║")
             putStrLn "╚════════════════════════════════════════╝"
             putStrLn ""
             putStrLn $ prettyBoard solution

@@ -1,4 +1,4 @@
-feat(haskell): initial implementation of the sudoku solver in Haskell , there are some printing issues , maybe we should enforce the use of ASCII to ensure consistent understandable output, also the IDE may mark some errors but its because i couldnt get the IDE to recognize stack therefore some errors are not real , independently of what the IDE says the project compiles and runs when u use the commands stack build and stack run , so there is no issue in ignoring those remarks.
+name:                sudoku-solver
 version:             0.1.0.0
 github:              "Ericthered123/sudoku-comparative-study"
 license:             BSD3
