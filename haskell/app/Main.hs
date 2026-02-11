@@ -12,7 +12,7 @@ import System.Exit (exitFailure)
 import Text.Printf (printf)
 import System.IO 
 import GHC.IO.Encoding (setLocaleEncoding)
-
+import Control.Monad (when)
 
 main :: IO ()
 main = do
@@ -36,21 +36,44 @@ runInteractive = do
     putStrLn "║     SUDOKU SOLVER - HASKELL            ║"
     putStrLn "╚════════════════════════════════════════╝"
     putStrLn ""
-    putStrLn "Please select an example:"
-    putStrLn "  1. Easy (FirstEmpty)"
-    putStrLn "  2. Medio (FirstEmpty)"
-    putStrLn "  3. Medio (MostConstrained)"
-    putStrLn "  4. Dificil (MostConstrained)"
+
+    board <- selectDifficulty
+    strategy <- selectStrategy
+
+    solveAndPrint "RESOLVIENDO SUDOKU" board strategy
+
+selectDifficulty :: IO Board
+selectDifficulty = do
+    putStrLn "Seleccione dificultad:"
+    putStrLn "  1. Fácil"
+    putStrLn "  2. Medio"
+    putStrLn "  3. Difícil"
     putStrLn ""
-    putStr "Opcion (1-4): "
-    
+    putStr "Opción (1-3): "
+
     option <- getLine
     case option of
-        "1" -> solveAndPrint "FACIL (FirstEmpty)" exampleEasy FirstEmpty
-        "2" -> solveAndPrint "MEDIO (FirstEmpty)" exampleMedium FirstEmpty
-        "3" -> solveAndPrint "MEDIO (MostConstrained)" exampleMedium MostConstrained
-        "4" -> solveAndPrint "DIFICIL (MostConstrained)" exampleHard MostConstrained
-        _ -> putStrLn "Opcion invalida" >> exitFailure
+        "1" -> return exampleEasy
+        "2" -> return exampleMedium
+        "3" -> return exampleHard
+        _   -> putStrLn "Opción inválida\n" >> selectDifficulty
+
+selectStrategy :: IO SolveStrategy
+selectStrategy = do
+    putStrLn ""
+    putStrLn "Seleccione heurística:"
+    putStrLn "  1. FirstEmpty"
+    putStrLn "  2. MostConstrained"
+    putStrLn "  3. PropagationMRV"
+    putStrLn ""
+    putStr "Opción (1-3): "
+
+    option <- getLine
+    case option of
+        "1" -> return FirstEmpty
+        "2" -> return MostConstrained
+        "3" -> return PropagationMRV
+        _   -> putStrLn "Opción inválida\n" >> selectStrategy
 
 -- | Ejecuta un ejemplo específico
 runExample :: String -> IO ()
@@ -86,22 +109,36 @@ runBenchmark = do
     benchmarkBoard (name, board) = do
         putStrLn $ "─── " ++ name ++ " " ++ replicate (35 - length name) '─'
         
-        -- Estrategia FirstEmpty
+        -- FirstEmpty
         (sol1, time1) <- timeIt $ return $! solveWithStrategy FirstEmpty board
         case sol1 of
             Nothing -> putStrLn "  FirstEmpty:       No solution"
-            Just _ -> printf "  FirstEmpty:       %.3f ms\n" (realToFrac time1 * 1000 :: Double)
+            Just _  ->
+                printf "  FirstEmpty:       %.3f ms\n"
+                    (realToFrac time1 * 1000 :: Double)
         
-        -- Estrategia MostConstrained
+        -- MostConstrained
         (sol2, time2) <- timeIt $ return $! solveWithStrategy MostConstrained board
         case sol2 of
             Nothing -> putStrLn "  MostConstrained:  No solution"
-            Just _ -> do
-                printf "  MostConstrained:  %.3f ms\n" (realToFrac time2 * 1000 :: Double)
-                if time1 > 0 
-                    then printf "  Speedup:          %.2fx\n" (realToFrac time1 / realToFrac time2 :: Double)
-                    else return ()
-        
+            Just _  -> do
+                printf "  MostConstrained:  %.3f ms\n"
+                    (realToFrac time2 * 1000 :: Double)
+                when (time1 > 0) $
+                    printf "  Speedup vs FE:    %.2fx\n"
+                        (realToFrac time1 / realToFrac time2 :: Double)
+
+        -- PropagationMRV (≈ CLPFD)
+        (sol3, time3) <- timeIt $ return $! solveWithStrategy PropagationMRV board
+        case sol3 of
+            Nothing -> putStrLn "  PropagationMRV:   No solution"
+            Just _  -> do
+                printf "  PropagationMRV:   %.3f ms\n"
+                    (realToFrac time3 * 1000 :: Double)
+                when (time3 > 0 && time2 > 0) $
+                    printf "  Speedup vs MC:    %.2fx\n"
+                        (realToFrac time2 / realToFrac time3 :: Double)
+
         putStrLn ""
 
 -- | Resuelve un tablero y muestra el resultado

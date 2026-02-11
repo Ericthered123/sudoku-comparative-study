@@ -1,7 +1,7 @@
 % ============================================================================
 % SUDOKU SOLVER MANUAL - Sin usar CLP(FD)
 % ============================================================================
-% Autores: [Tu nombre] y [Compañero]
+% Autores: [Eric Doyle] y [Bruno Lodeiro]
 % Fecha: Febrero 2026
 % Materia: Programación Lógica y Funcional
 %

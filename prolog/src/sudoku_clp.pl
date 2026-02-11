@@ -34,32 +34,44 @@
 %              [_,9,_,_,_,_,_,_,_],
 %              [5,_,_,_,_,_,_,7,3],
 %              [_,_,2,_,1,_,_,_,_],
-%              [_,_,_,_,4,_,_,_,9]], Solucion).
+%              [_,_,_,_,4,_,_,_,9]], Solution).
+
+% sudoku(+Filas)
+%
+% Resuelve un Sudoku representado como matriz 9x9.
+% Cada celda puede ser:
+%   - Un entero 1..9 (valor fijo)
+%   - 0              (celda vacía)
+%   - Una variable libre (_)
 % ----------------------------------------------------------------------------
 sudoku(Filas) :-
     % 1. Aplanar la matriz en una lista de 81 elementos
     append(Filas, Vs),
     
-    % 2. RESTRICCIÓN DE DOMINIO:
+    % 2. Normalizar celdas:
+    %    - 0 → variable libre
+    %    - variables y números quedan intactos
+    maplist(normalizar_celda, Vs),
+    % 3. RESTRICCIÓN DE DOMINIO:
     %    Todas las variables deben estar en el rango 1..9
     Vs ins 1..9,
     
-    % 3. RESTRICCIÓN DE FILAS:
+    % 4. RESTRICCIÓN DE FILAS:
     %    Cada fila debe tener todos los números del 1 al 9 (sin repetición)
     maplist(all_distinct, Filas),
     
-    % 4. RESTRICCIÓN DE COLUMNAS:
+    % 5. RESTRICCIÓN DE COLUMNAS:
     %    Transponemos la matriz para obtener columnas como filas
     %    Luego aplicamos all_distinct a cada columna
     transpose(Filas, Columnas),
     maplist(all_distinct, Columnas),
     
-    % 5. RESTRICCIÓN DE BLOQUES 3x3:
+    % 6. RESTRICCIÓN DE BLOQUES 3x3:
     %    Extraemos los 9 bloques y verificamos que sean distintos
     bloques(Filas, Bloques),
     maplist(all_distinct, Bloques),
     
-    % 6. SOLUTION SEARCH (LABELLING)
+    % 7. SOLUTION SEARCH (LABELLING)
     %    - ff (first fail): elige primero la variable con menos opciones
     %    - Maximiza la poda del espacio de búsqueda
     %    - La propagación de restricciones sigue activa en todo momento
@@ -69,6 +81,21 @@ sudoku(Filas) :-
     % labeling([ffc], Vs).     % Variante más sofisticada
     % labeling([bisect], Vs).  % Útil para dominios grandes 
     % TODO se podria fijar para hacer un benchmark con distintas heuristicas
+
+% ----------------------------------------------------------------------------
+% normalizar_celda(+Celda)
+%
+% Convierte una celda:
+%   - Si es 0 → queda como variable libre
+%   - Si es número 1..9 → queda fija
+%   - Si es variable → queda libre
+% ----------------------------------------------------------------------------
+normalizar_celda(Celda) :-
+    (   integer(Celda), Celda =:= 0
+    ->  Celda = _
+    ;   true
+    ).
+
 
 % ----------------------------------------------------------------------------
 % bloques(+Filas, -Bloques)
