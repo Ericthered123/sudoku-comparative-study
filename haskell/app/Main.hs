@@ -26,6 +26,7 @@ main = do
         ["--example", level] -> runExample level
         ["--file", path] -> runFromFile path
         ["--benchmark"] -> runBenchmark
+        ["--bench-external", strat, level] -> runExternalBench strat level
         ["--help"] -> printHelp
         _ -> printHelp >> exitFailure
 
@@ -185,3 +186,25 @@ printHelp = putStrLn $ unlines
     , "  sudoku-exe --file puzzle.txt"
     , "  sudoku-exe --benchmark"
     ]
+
+-- | Modo silencioso para benchmarking externo (usado por Python)
+--   Imprime SOLO el tiempo en segundos.
+runExternalBench :: String -> String -> IO ()
+runExternalBench strat level = do
+    let board = case level of
+            "easy"   -> exampleEasy
+            "medium" -> exampleMedium
+            "hard"   -> exampleHard
+            _        -> error "Invalid level"
+
+        strategy = case strat of
+            "fe"   -> FirstEmpty
+            "mrv"  -> MostConstrained
+            "pmrv" -> PropagationMRV
+            _      -> error "Invalid strategy"
+
+    -- Medición interna (solo solver)
+    (_, time) <- timeIt $ return $! solveWithStrategy strategy board
+
+    -- Imprimir SOLO número (segundos)
+    print (realToFrac time :: Double)
