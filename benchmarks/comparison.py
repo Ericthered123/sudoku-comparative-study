@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 ╔══════════════════════════════════════════════════════════════════════╗
 ║  BENCHMARK COMPARATIVO - SUDOKU SOLVERS                              ║
@@ -37,7 +37,7 @@ PROJECT_ROOT  = Path(__file__).parent.parent
 PUZZLES_DIR   = PROJECT_ROOT / "benchmarks" / "puzzles"
 RESULTS_DIR   = PROJECT_ROOT / "benchmarks" / "results"
 PROLOG_SRC    = PROJECT_ROOT / "prolog" / "src"
-HASKELL_DIR   = PROJECT_ROOT / "haskell" / "src"
+HASKELL_DIR   = PROJECT_ROOT / "haskell"
 
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -118,13 +118,21 @@ def puzzle_to_prolog_list(puzzle: str) -> str:
     return '[' + ','.join(tokens) + ']'
 
 def puzzle_to_prolog_matrix(puzzle: str) -> str:
-    """Convierte cadena de 81 chars en matriz 9×9 Prolog con '_' para vacíos."""
+    """
+    Convierte cadena de 81 chars en matriz 9×9 Prolog con variables nombradas.
+
+    Usa variables con nombre único (V00..V88) para celdas vacías.
+    - '_' crea variables anónimas independientes → CLP(FD) no puede propagar.
+    - '0' requiere normalizar_celda/1 que no puede desinstanciar un entero.
+    - Variables nombradas V00..V88 son variables Prolog reales que CLP(FD)
+      constrine y propaga correctamente entre filas/columnas/bloques.
+    """
     rows = []
     for r in range(9):
         row = []
         for c in range(9):
             ch = puzzle[r*9 + c]
-            row.append('_' if ch in '0.' else ch)
+            row.append(f'V{r}{c}' if ch in '0.' else ch)
         rows.append('[' + ','.join(row) + ']')
     return '[' + ','.join(rows) + ']'
 
@@ -146,82 +154,114 @@ def run_process(cmd: List[str], timeout: int) -> tuple[bool, str, str, bool]:
 # ═══════════════════════════════════════════════════════════════════════
 # RUNNERS PROLOG
 # ═══════════════════════════════════════════════════════════════════════
+# En Windows, pasar código Prolog por -g es frágil (límite de longitud
+# de argumento, backslashes en rutas, comillas anidadas).
+# Solución: escribir un archivo .pl temporal y ejecutarlo con swipl.
+# ═══════════════════════════════════════════════════════════════════════
 
-def _make_prolog_goal_naive(puzzle: str, src: Path) -> str:
-    """
-    Genera goal Prolog para el solver Naive (sudoku_manual.pl).
-    Mide tiempo de wallclock SOLO del solver, excluyendo carga del intérprete.
-    """
+import tempfile
+
+def _make_prolog_script_naive(puzzle: str, src: Path) -> str:
+    """Script Prolog completo para el solver Naive."""
     pl_list = puzzle_to_prolog_list(puzzle)
-    return (
-       f"use_module(library(lists)),"
-        f"consult('{src}'),"
-        f"Input = {pl_list},"
-        f"statistics(walltime,[_,_]),"
-        f"(sudoku(Input,_) -> true ; true),"
-        f"statistics(walltime,[_,T]),"
-        f"format('~w~n',[T])"
-    )
+    src_posix = src.as_posix()
+    return f""":- use_module(library(lists)).
+:- consult('{src_posix}').
+:- initialization(main, main).
+main :-
+    Input = {pl_list},
+    statistics(walltime, [_, _]),
+    (sudoku(Input, _) -> true ; true),
+    statistics(walltime, [_, T]),
+    format('~w~n', [T]),
+    halt.
+"""
 
-def _make_prolog_goal_mrv(puzzle: str, src: Path) -> str:
-    """Goal Prolog para el solver MRV (sudoku_manual_mrv.pl)."""
+def _make_prolog_script_mrv(puzzle: str, src: Path) -> str:
+    """Script Prolog completo para el solver MRV."""
     pl_list = puzzle_to_prolog_list(puzzle)
-    return (
-        f"use_module(library(lists)),"
-        f"consult('{src}'),"
-        f"Input = {pl_list},"
-        f"statistics(walltime,[_,_]),"
-        f"(resolver(Input,_) -> true ; true),"
-        f"statistics(walltime,[_,T]),"
-        f"format('~w~n',[T])"
-    )
+    src_posix = src.as_posix()
+    return f""":- use_module(library(lists)).
+:- consult('{src_posix}').
+:- initialization(main, main).
+main :-
+    Input = {pl_list},
+    statistics(walltime, [_, _]),
+    (resolver(Input, _) -> true ; true),
+    statistics(walltime, [_, T]),
+    format('~w~n', [T]),
+    halt.
+"""
 
-def _make_prolog_goal_clp(puzzle: str, src: Path) -> str:
-    """
-    Goal Prolog para el solver CLP(FD) (sudoku_clp.pl).
-    Usa representación matricial y predicado sudoku/1.
-    """
+def _make_prolog_script_clp(puzzle: str, src: Path) -> str:
+    """Script Prolog completo para el solver CLP(FD)."""
     matrix = puzzle_to_prolog_matrix(puzzle)
-    return (
-       f"use_module(library(clpfd)),"
-        f"consult('{src}'),"
-        f"Matrix = {matrix},"
-        f"statistics(walltime,[_,_]),"
-        f"sudoku(Matrix),"
-        f"statistics(walltime,[_,T]),"
-        f"format('~w~n',[T])"
-    )
+    src_posix = src.as_posix()
+    return f""":- use_module(library(clpfd)).
+:- consult('{src_posix}').
+:- initialization(main, main).
+main :-
+    Matrix = {matrix},
+    statistics(walltime, [_, _]),
+    sudoku(Matrix),
+    statistics(walltime, [_, T]),
+    format('~w~n', [T]),
+    halt.
+"""
 
-def _run_prolog(goal: str) -> Dict:
-    """Ejecuta SWI-Prolog con un goal dado; retorna dict de resultado."""
-    ok_flag, stdout, stderr, timed_out = run_process(
-        ['swipl', '-q', '-g', goal, '-t'], TIMEOUT
-    )
-    if timed_out:
-        return {"success": False, "timeout": True, "error": "Timeout"}
-    if ok_flag and stdout:
-        try:
-            return {"success": True, "timeout": False, "time_ms": float(stdout)}
-        except ValueError:
-            return {"success": False, "timeout": False, "error": f"Bad output: {stdout!r}"}
-    return {"success": False, "timeout": False, "error": stderr[:120] or "No output"}
+def _run_prolog_script(script_content: str) -> Dict:
+    """
+    Escribe el script en un archivo temporal y ejecuta swipl.
+    Más robusto que -g en Windows: sin límite de longitud ni problemas
+    con rutas que contienen espacios o backslashes.
+    """
+    tmp = None
+    try:
+        # Crear archivo temporal con extensión .pl
+        with tempfile.NamedTemporaryFile(
+            mode='w', suffix='.pl', delete=False,
+            encoding='utf-8', newline='\n'
+        ) as f:
+            f.write(script_content)
+            tmp = Path(f.name)
+
+        ok_flag, stdout, stderr, timed_out = run_process(
+            ['swipl', '-q', str(tmp)], TIMEOUT
+        )
+
+        if timed_out:
+            return {"success": False, "timeout": True, "error": "Timeout"}
+        if ok_flag and stdout:
+            try:
+                return {"success": True, "timeout": False, "time_ms": float(stdout.strip())}
+            except ValueError:
+                return {"success": False, "timeout": False,
+                        "error": f"Bad output: {stdout!r}"}
+        return {"success": False, "timeout": False,
+                "error": (stderr[:120] if stderr else "No output")}
+    finally:
+        if tmp and tmp.exists():
+            try:
+                tmp.unlink()
+            except Exception:
+                pass
 
 def benchmark_prolog(puzzle: str, solver_type: str) -> Dict:
     """
     Ejecuta RUNS_PER_PUZZLE runs del solver Prolog indicado.
-    Retorna mediana de tiempos o error.
+    Retorna mediana de tiempos o dict de error.
 
     solver_type: "naive" | "mrv" | "clp"
     """
-    goals = {
-        "naive": (_make_prolog_goal_naive, PROLOG_SRC / "sudoku_manual.pl"),
-        "mrv":   (_make_prolog_goal_mrv,   PROLOG_SRC / "sudoku_manual_mrv.pl"),
-        "clp":   (_make_prolog_goal_clp,   PROLOG_SRC / "sudoku_clp.pl"),
+    script_makers = {
+        "naive": (_make_prolog_script_naive, PROLOG_SRC / "sudoku_manual.pl"),
+        "mrv":   (_make_prolog_script_mrv,   PROLOG_SRC / "sudoku_manual_mrv.pl"),
+        "clp":   (_make_prolog_script_clp,   PROLOG_SRC / "sudoku_clp.pl"),
     }
-    if solver_type not in goals:
+    if solver_type not in script_makers:
         return {"success": False, "error": f"Unknown solver: {solver_type}"}
 
-    make_goal, src = goals[solver_type]
+    make_script, src = script_makers[solver_type]
 
     if not src.exists():
         return {"success": False, "error": f"File not found: {src}"}
@@ -229,13 +269,12 @@ def benchmark_prolog(puzzle: str, solver_type: str) -> Dict:
     times = []
     last_err = None
 
-    # Warm-up (descartado)
-    for _ in range(WARMUP_RUNS):
-        _run_prolog(make_goal(puzzle, src))
+    # Warm-up: una ejecución descartada para que el SO cachee el ejecutable
+    _run_prolog_script(make_script(puzzle, src))
 
     # Mediciones reales
     for _ in range(RUNS_PER_PUZZLE):
-        r = _run_prolog(make_goal(puzzle, src))
+        r = _run_prolog_script(make_script(puzzle, src))
         if r["success"]:
             times.append(r["time_ms"])
         elif r.get("timeout"):
@@ -244,14 +283,15 @@ def benchmark_prolog(puzzle: str, solver_type: str) -> Dict:
             last_err = r.get("error", "Unknown")
 
     if not times:
-        return {"success": False, "timeout": False, "error": last_err or "No successful runs", "all_times": []}
+        return {"success": False, "timeout": False,
+                "error": last_err or "No successful runs", "all_times": []}
 
     return {
-        "success":  True,
-        "timeout":  False,
-        "time_ms":  statistics.median(times),
+        "success":   True,
+        "timeout":   False,
+        "time_ms":   statistics.median(times),
         "all_times": times,
-        "error":    None,
+        "error":     None,
     }
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -273,19 +313,36 @@ _HASKELL_LEVELS = {
 }
 
 def _find_haskell_exe() -> Optional[Path]:
-    """Busca el ejecutable Haskell compilado en rutas típicas de Stack."""
+    """
+    Busca el ejecutable Haskell compilado.
+    Busca en rutas de Stack, luego en PATH (compatible Windows/Linux/macOS).
+    """
+    # 1. Buscar en .stack-work (nombres con y sin .exe para Windows)
     candidates = [
-        HASKELL_DIR / ".stack-work" / "dist",
+        HASKELL_DIR / ".stack-work",
         HASKELL_DIR / "dist-newstyle",
     ]
     for base in candidates:
-        for exe in base.rglob("sudoku-exe.exe"):
-            if exe.is_file() and os.access(exe, os.X_OK):
-                return exe
-    # Fallback: buscar en PATH
-    ok_flag, stdout, _, _ = run_process(['which', 'sudoku-exe.exe'], 5)
+        if not base.exists():
+            continue
+        for pattern in ("sudoku-exe.exe", "sudoku-exe"):
+            for exe in base.rglob(pattern):
+                if exe.is_file():
+                    return exe
+
+    # 2. Fallback: buscar en PATH del sistema
+    which_cmd = "where" if sys.platform == "win32" else "which"
+    ok_flag, stdout, _, _ = run_process([which_cmd, "sudoku-exe"], 5)
     if ok_flag and stdout:
-        return Path(stdout.strip())
+        return Path(stdout.strip().splitlines()[0])  # where puede devolver varias líneas
+
+    # 3. Ruta directa típica de stack install en Windows
+    appdata = os.environ.get("APPDATA", "")
+    if appdata:
+        candidate = Path(appdata) / "local" / "bin" / "sudoku-exe.exe"
+        if candidate.exists():
+            return candidate
+
     return None
 
 def benchmark_haskell(puzzle: str, strategy: str, difficulty: str) -> Dict:
@@ -505,12 +562,14 @@ def print_speedups(stats: List[AggregatedStats]):
             continue
         print(f"\n{C.BOLD}  {diff.upper()}{C.ENDC}")
         for slow, fast, label in comparisons:
-            if slow in ds and fast in ds and ds[fast] > 0:
+            if slow in ds and fast in ds and ds[fast] > 0 and ds[slow] > 0:
                 factor = ds[slow] / ds[fast]
                 direction = "más rápido" if factor >= 1 else "más lento"
                 f_abs = factor if factor >= 1 else 1 / factor
                 bar = "█" * min(int(f_abs), 40)
                 print(f"    {label:<40}  {f_abs:>6.1f}× {direction}  {C.CYAN}{bar}{C.ENDC}")
+            elif slow in ds and fast in ds:
+                print(f"    {label:<40}  {C.YELLOW}N/A — mediana 0 ms (puzzles triviales en muestra){C.ENDC}")
 
 # ═══════════════════════════════════════════════════════════════════════
 # GUARDADO DE RESULTADOS
@@ -671,7 +730,7 @@ def generate_plots(stats: List[AggregatedStats], results: List[BenchmarkResult])
     labels  = [SOLVER_LABELS[sid].replace("\n", " ") for sid in SOLVER_ORDER]
     colors  = [SOLVER_COLORS[sid] for sid in SOLVER_ORDER]
 
-    bp = ax.boxplot(data, labels=labels, patch_artist=True,
+    bp = ax.boxplot(data, tick_labels=labels, patch_artist=True,
                     medianprops=dict(color="black", linewidth=2))
     for patch, color in zip(bp["boxes"], colors):
         patch.set_facecolor(color)
