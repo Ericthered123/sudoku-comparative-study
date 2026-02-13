@@ -1,0 +1,209 @@
+{
+  "metadata": {
+    "runs_per_puzzle": 1,
+    "warmup_runs": 1,
+    "timeout_s": 120,
+    "timestamp": "2026-02-13T15:20:23"
+  },
+  "results": [
+    {
+      "solver": "prolog_naive",
+      "difficulty": "easy",
+      "puzzle_num": 1,
+      "puzzle": "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "ERROR: [Thread main] -g :- use_modu",
+      "all_times": []
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "easy",
+      "puzzle_num": 1,
+      "puzzle": "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "ERROR: [Thread main] -g :- use_modu",
+      "all_times": []
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "easy",
+      "puzzle_num": 1,
+      "puzzle": "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "ERROR: [Thread main] -g :- use_modu",
+      "all_times": []
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "easy",
+      "puzzle_num": 1,
+      "puzzle": "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "Ejecutable Haskell no encontrado. C",
+      "all_times": []
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "easy",
+      "puzzle_num": 1,
+      "puzzle": "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "Ejecutable Haskell no encontrado. C",
+      "all_times": []
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "easy",
+      "puzzle_num": 1,
+      "puzzle": "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "Ejecutable Haskell no encontrado. C",
+      "all_times": []
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "medium",
+      "puzzle_num": 1,
+      "puzzle": "000000000000003085001020000000507000004000100090000000500000073002010000000040009",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "ERROR: [Thread main] -g :- use_modu",
+      "all_times": []
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "medium",
+      "puzzle_num": 1,
+      "puzzle": "000000000000003085001020000000507000004000100090000000500000073002010000000040009",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "ERROR: [Thread main] -g :- use_modu",
+      "all_times": []
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "medium",
+      "puzzle_num": 1,
+      "puzzle": "000000000000003085001020000000507000004000100090000000500000073002010000000040009",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "ERROR: [Thread main] -g :- use_modu",
+      "all_times": []
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "medium",
+      "puzzle_num": 1,
+      "puzzle": "000000000000003085001020000000507000004000100090000000500000073002010000000040009",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "Ejecutable Haskell no encontrado. C",
+      "all_times": []
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "medium",
+      "puzzle_num": 1,
+      "puzzle": "000000000000003085001020000000507000004000100090000000500000073002010000000040009",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "Ejecutable Haskell no encontrado. C",
+      "all_times": []
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "medium",
+      "puzzle_num": 1,
+      "puzzle": "000000000000003085001020000000507000004000100090000000500000073002010000000040009",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "Ejecutable Haskell no encontrado. C",
+      "all_times": []
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "hard",
+      "puzzle_num": 1,
+      "puzzle": "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "ERROR: [Thread main] -g :- use_modu",
+      "all_times": []
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "hard",
+      "puzzle_num": 1,
+      "puzzle": "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "ERROR: [Thread main] -g :- use_modu",
+      "all_times": []
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "hard",
+      "puzzle_num": 1,
+      "puzzle": "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "ERROR: [Thread main] -g :- use_modu",
+      "all_times": []
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "hard",
+      "puzzle_num": 1,
+      "puzzle": "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "Ejecutable Haskell no encontrado. C",
+      "all_times": []
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "hard",
+      "puzzle_num": 1,
+      "puzzle": "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "Ejecutable Haskell no encontrado. C",
+      "all_times": []
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "hard",
+      "puzzle_num": 1,
+      "puzzle": "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+      "time_ms": 0,
+      "success": false,
+      "timeout": false,
+      "error": "Ejecutable Haskell no encontrado. C",
+      "all_times": []
+    }
+  ],
+  "statistics": []
+}
