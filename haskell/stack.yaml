@@ -1,0 +1,38 @@
+# Stack configuration file
+# For more information, see: http://docs.haskellstack.org/en/stable/yaml_configuration/
+
+# Resolver to choose a 'specific' stackage snapshot or a compiler version.
+# A snapshot resolver dictates the compiler version and the set of packages
+# to be used for project dependencies.
+resolver: lts-22.7  # GHC 9.6.3
+
+# User packages to be built.
+packages:
+- .
+
+# Dependency packages to be pulled from upstream that are not in the resolver.
+extra-deps: []
+
+# Override default flag values for local packages and extra-deps
+flags: {}
+
+# Extra package databases containing global packages
+extra-package-dbs: []
+
+# Control whether we use the GHC we find on the path
+# system-ghc: true
+
+# Require a specific version of Stack, using version ranges
+# require-stack-version: -any # Default
+# require-stack-version: ">=2.9"
+
+# Override the architecture used by Stack, especially useful on Windows
+# arch: i386
+# arch: x86_64
+
+# Extra directories used by Stack for building
+# extra-include-dirs: [/path/to/dir]
+# extra-lib-dirs: [/path/to/dir]
+
+# Allow a newer minor version of GHC than the snapshot specifies
+# compiler-check: newer-minor

@@ -1,0 +1,1428 @@
+{
+  "metadata": {
+    "runs_per_puzzle": 5,
+    "warmup_runs": 1,
+    "timeout_s": 120,
+    "timestamp": "2026-02-13T19:12:25"
+  },
+  "results": [
+    {
+      "solver": "prolog_naive",
+      "difficulty": "easy",
+      "puzzle_num": 1,
+      "puzzle": "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
+      "time_ms": 1404.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        1533.0,
+        1404.0,
+        1375.0,
+        1451.0,
+        1398.0
+      ]
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "easy",
+      "puzzle_num": 1,
+      "puzzle": "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
+      "time_ms": 39.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        39.0,
+        39.0,
+        39.0,
+        39.0,
+        39.0
+      ]
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "easy",
+      "puzzle_num": 1,
+      "puzzle": "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
+      "time_ms": 16.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        16.0,
+        17.0,
+        16.0,
+        16.0,
+        16.0
+      ]
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "easy",
+      "puzzle_num": 1,
+      "puzzle": "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
+      "time_ms": 5.0008,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        4.996300000000001,
+        5.003299999999999,
+        5.0008,
+        4.9997,
+        5.0015
+      ]
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "easy",
+      "puzzle_num": 1,
+      "puzzle": "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
+      "time_ms": 2.9924,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        2.0016000000000003,
+        1.9966,
+        3.0041,
+        3.0018000000000002,
+        2.9924
+      ]
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "easy",
+      "puzzle_num": 1,
+      "puzzle": "530070000600195000098000060800060003400803001700020006060000280000419005000080079",
+      "time_ms": 2.9999,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        3.9989,
+        2.999,
+        2.9975,
+        3.9867000000000004,
+        2.9999
+      ]
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "easy",
+      "puzzle_num": 2,
+      "puzzle": "003020600900305001001806400008102900700000008006708200002609500800203009005010300",
+      "time_ms": 66.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        66.0,
+        66.0,
+        66.0,
+        66.0,
+        66.0
+      ]
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "easy",
+      "puzzle_num": 2,
+      "puzzle": "003020600900305001001806400008102900700000008006708200002609500800203009005010300",
+      "time_ms": 36.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        36.0,
+        39.0,
+        36.0,
+        36.0,
+        36.0
+      ]
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "easy",
+      "puzzle_num": 2,
+      "puzzle": "003020600900305001001806400008102900700000008006708200002609500800203009005010300",
+      "time_ms": 12.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        12.0,
+        12.0,
+        12.0,
+        12.0,
+        12.0
+      ]
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "easy",
+      "puzzle_num": 2,
+      "puzzle": "003020600900305001001806400008102900700000008006708200002609500800203009005010300",
+      "time_ms": 5.0092,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        5.0092,
+        6.0031,
+        4.9965,
+        6.0004,
+        4.9975000000000005
+      ]
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "easy",
+      "puzzle_num": 2,
+      "puzzle": "003020600900305001001806400008102900700000008006708200002609500800203009005010300",
+      "time_ms": 1.9995,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        2.9432,
+        1.9995,
+        2.9808999999999997,
+        1.9957,
+        1.9987999999999997
+      ]
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "easy",
+      "puzzle_num": 2,
+      "puzzle": "003020600900305001001806400008102900700000008006708200002609500800203009005010300",
+      "time_ms": 3.0037000000000003,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        3.0011,
+        3.0037000000000003,
+        2.9965,
+        3.0094000000000003,
+        4.0012
+      ]
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "easy",
+      "puzzle_num": 3,
+      "puzzle": "200080300060070084030500209000105408000000000402706000301007040720040060004010003",
+      "time_ms": 97.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        98.0,
+        97.0,
+        97.0,
+        97.0,
+        101.0
+      ]
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "easy",
+      "puzzle_num": 3,
+      "puzzle": "200080300060070084030500209000105408000000000402706000301007040720040060004010003",
+      "time_ms": 48.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        49.0,
+        48.0,
+        48.0,
+        47.0,
+        47.0
+      ]
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "easy",
+      "puzzle_num": 3,
+      "puzzle": "200080300060070084030500209000105408000000000402706000301007040720040060004010003",
+      "time_ms": 20.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        20.0,
+        21.0,
+        20.0,
+        19.0,
+        20.0
+      ]
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "easy",
+      "puzzle_num": 3,
+      "puzzle": "200080300060070084030500209000105408000000000402706000301007040720040060004010003",
+      "time_ms": 5.0007,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        4.9986,
+        6.0016,
+        5.0007,
+        4.9969,
+        5.0038
+      ]
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "easy",
+      "puzzle_num": 3,
+      "puzzle": "200080300060070084030500209000105408000000000402706000301007040720040060004010003",
+      "time_ms": 3.0005,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        3.0074,
+        2.9952,
+        3.004,
+        3.0005,
+        1.9968
+      ]
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "easy",
+      "puzzle_num": 3,
+      "puzzle": "200080300060070084030500209000105408000000000402706000301007040720040060004010003",
+      "time_ms": 3.0005,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        2.9992,
+        3.0005,
+        3.0002,
+        3.0005,
+        3.0005
+      ]
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "easy",
+      "puzzle_num": 4,
+      "puzzle": "000000907000420180000705026100904000050000040000507009920108000034059000507000000",
+      "time_ms": 6441.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        6374.0,
+        6481.0,
+        6449.0,
+        6441.0,
+        6361.0
+      ]
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "easy",
+      "puzzle_num": 4,
+      "puzzle": "000000907000420180000705026100904000050000040000507009920108000034059000507000000",
+      "time_ms": 92.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        93.0,
+        92.0,
+        93.0,
+        92.0,
+        92.0
+      ]
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "easy",
+      "puzzle_num": 4,
+      "puzzle": "000000907000420180000705026100904000050000040000507009920108000034059000507000000",
+      "time_ms": 21.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        21.0,
+        21.0,
+        21.0,
+        21.0,
+        21.0
+      ]
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "easy",
+      "puzzle_num": 4,
+      "puzzle": "000000907000420180000705026100904000050000040000507009920108000034059000507000000",
+      "time_ms": 5.004899999999999,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        4.9999,
+        5.004899999999999,
+        6.0026,
+        5.0122,
+        5.0
+      ]
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "easy",
+      "puzzle_num": 4,
+      "puzzle": "000000907000420180000705026100904000050000040000507009920108000034059000507000000",
+      "time_ms": 2.9991000000000003,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        4.999499999999999,
+        2.9996,
+        1.9894,
+        1.9945000000000002,
+        2.9991000000000003
+      ]
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "easy",
+      "puzzle_num": 4,
+      "puzzle": "000000907000420180000705026100904000050000040000507009920108000034059000507000000",
+      "time_ms": 3.0035000000000003,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        3.0035000000000003,
+        4.005,
+        3.004,
+        2.9867,
+        3.0
+      ]
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "medium",
+      "puzzle_num": 1,
+      "puzzle": "000000000000003085001020000000507000004000100090000000500000073002010000000040009",
+      "time_ms": 120000,
+      "success": false,
+      "timeout": true,
+      "error": "Timeout",
+      "all_times": []
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "medium",
+      "puzzle_num": 1,
+      "puzzle": "000000000000003085001020000000507000004000100090000000500000073002010000000040009",
+      "time_ms": 47319.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        47453.0,
+        47143.0,
+        47825.0,
+        47319.0,
+        47180.0
+      ]
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "medium",
+      "puzzle_num": 1,
+      "puzzle": "000000000000003085001020000000507000004000100090000000500000073002010000000040009",
+      "time_ms": 36.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        36.0,
+        36.0,
+        36.0,
+        35.0,
+        36.0
+      ]
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "medium",
+      "puzzle_num": 1,
+      "puzzle": "000000000000003085001020000000507000004000100090000000500000073002010000000040009",
+      "time_ms": 68685.356,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        67814.743,
+        67711.3775,
+        68685.356,
+        68760.6143,
+        68721.2463
+      ]
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "medium",
+      "puzzle_num": 1,
+      "puzzle": "000000000000003085001020000000507000004000100090000000500000073002010000000040009",
+      "time_ms": 2112.9684,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        2181.001,
+        2152.0,
+        2102.8675,
+        2112.9684,
+        2097.3712
+      ]
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "medium",
+      "puzzle_num": 1,
+      "puzzle": "000000000000003085001020000000507000004000100090000000500000073002010000000040009",
+      "time_ms": 16.0003,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        16.0003,
+        15.0039,
+        14.9983,
+        16.000400000000003,
+        16.998099999999997
+      ]
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "medium",
+      "puzzle_num": 2,
+      "puzzle": "000000907000420180000705026100904000050000040000507009920108000034059000507000000",
+      "time_ms": 6354.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        6469.0,
+        6307.0,
+        6369.0,
+        6332.0,
+        6354.0
+      ]
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "medium",
+      "puzzle_num": 2,
+      "puzzle": "000000907000420180000705026100904000050000040000507009920108000034059000507000000",
+      "time_ms": 93.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        92.0,
+        92.0,
+        93.0,
+        97.0,
+        93.0
+      ]
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "medium",
+      "puzzle_num": 2,
+      "puzzle": "000000907000420180000705026100904000050000040000507009920108000034059000507000000",
+      "time_ms": 21.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        21.0,
+        21.0,
+        21.0,
+        20.0,
+        21.0
+      ]
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "medium",
+      "puzzle_num": 2,
+      "puzzle": "000000907000420180000705026100904000050000040000507009920108000034059000507000000",
+      "time_ms": 68537.5368,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        68537.5368,
+        68194.5925,
+        68297.1328,
+        68760.2536,
+        69290.4425
+      ]
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "medium",
+      "puzzle_num": 2,
+      "puzzle": "000000907000420180000705026100904000050000040000507009920108000034059000507000000",
+      "time_ms": 2132.0044,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        2204.0561,
+        2142.0031000000004,
+        2110.3965,
+        2103.0251,
+        2132.0044
+      ]
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "medium",
+      "puzzle_num": 2,
+      "puzzle": "000000907000420180000705026100904000050000040000507009920108000034059000507000000",
+      "time_ms": 15.998600000000001,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        15.998600000000001,
+        14.9998,
+        16.016099999999998,
+        15.976199999999999,
+        17.0041
+      ]
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "medium",
+      "puzzle_num": 3,
+      "puzzle": "400000805030000000000700000020000060000080400000010000000603070500200000104000000",
+      "time_ms": 120000,
+      "success": false,
+      "timeout": true,
+      "error": "Timeout",
+      "all_times": []
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "medium",
+      "puzzle_num": 3,
+      "puzzle": "400000805030000000000700000020000060000080400000010000000603070500200000104000000",
+      "time_ms": 547.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        547.0,
+        544.0,
+        543.0,
+        549.0,
+        550.0
+      ]
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "medium",
+      "puzzle_num": 3,
+      "puzzle": "400000805030000000000700000020000060000080400000010000000603070500200000104000000",
+      "time_ms": 31.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        31.0,
+        31.0,
+        31.0,
+        31.0,
+        32.0
+      ]
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "medium",
+      "puzzle_num": 3,
+      "puzzle": "400000805030000000000700000020000060000080400000010000000603070500200000104000000",
+      "time_ms": 69078.11230000001,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        69272.21609999999,
+        69078.11230000001,
+        69323.8911,
+        68413.9784,
+        68920.724
+      ]
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "medium",
+      "puzzle_num": 3,
+      "puzzle": "400000805030000000000700000020000060000080400000010000000603070500200000104000000",
+      "time_ms": 2210.5576,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        2153.0002,
+        2270.5887,
+        2352.1971000000003,
+        2210.5576,
+        2151.6533
+      ]
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "medium",
+      "puzzle_num": 3,
+      "puzzle": "400000805030000000000700000020000060000080400000010000000603070500200000104000000",
+      "time_ms": 15.996199999999998,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        15.0001,
+        14.9962,
+        15.996199999999998,
+        16.0003,
+        16.0061
+      ]
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "medium",
+      "puzzle_num": 4,
+      "puzzle": "000060080002408300060000014800040600000000000001090007570000090006305400080020000",
+      "time_ms": 120000,
+      "success": false,
+      "timeout": true,
+      "error": "Timeout",
+      "all_times": []
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "medium",
+      "puzzle_num": 4,
+      "puzzle": "000060080002408300060000014800040600000000000001090007570000090006305400080020000",
+      "time_ms": 225.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        224.0,
+        231.0,
+        225.0,
+        225.0,
+        224.0
+      ]
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "medium",
+      "puzzle_num": 4,
+      "puzzle": "000060080002408300060000014800040600000000000001090007570000090006305400080020000",
+      "time_ms": 37.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        43.0,
+        37.0,
+        37.0,
+        37.0,
+        37.0
+      ]
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "medium",
+      "puzzle_num": 4,
+      "puzzle": "000060080002408300060000014800040600000000000001090007570000090006305400080020000",
+      "time_ms": 69548.5724,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        69034.8924,
+        69636.5169,
+        69783.8622,
+        69548.5724,
+        69249.12580000001
+      ]
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "medium",
+      "puzzle_num": 4,
+      "puzzle": "000060080002408300060000014800040600000000000001090007570000090006305400080020000",
+      "time_ms": 2135.1875,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        2100.4905,
+        2164.8806999999997,
+        2135.1875,
+        2103.9963,
+        2135.9874
+      ]
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "medium",
+      "puzzle_num": 4,
+      "puzzle": "000060080002408300060000014800040600000000000001090007570000090006305400080020000",
+      "time_ms": 15.998999999999999,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        15.998999999999999,
+        16.0038,
+        15.996400000000001,
+        15.996500000000001,
+        15.999800000000002
+      ]
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "hard",
+      "puzzle_num": 1,
+      "puzzle": "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+      "time_ms": 17300.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        17245.0,
+        17223.0,
+        17300.0,
+        17455.0,
+        17641.0
+      ]
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "hard",
+      "puzzle_num": 1,
+      "puzzle": "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+      "time_ms": 10657.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        10657.0,
+        10688.0,
+        10708.0,
+        10595.0,
+        10577.0
+      ]
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "hard",
+      "puzzle_num": 1,
+      "puzzle": "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+      "time_ms": 124.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        129.0,
+        122.0,
+        124.0,
+        124.0,
+        124.0
+      ]
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "hard",
+      "puzzle_num": 1,
+      "puzzle": "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+      "time_ms": 49.990300000000005,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        49.990300000000005,
+        50.986700000000006,
+        49.995900000000006,
+        48.9998,
+        49.001799999999996
+      ]
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "hard",
+      "puzzle_num": 1,
+      "puzzle": "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+      "time_ms": 482.0276,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        477.0004,
+        474.9939,
+        539.0323999999999,
+        489.5967,
+        482.0276
+      ]
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "hard",
+      "puzzle_num": 1,
+      "puzzle": "800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+      "time_ms": 525.9956999999999,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        521.9961,
+        522.0036,
+        530.0006999999999,
+        525.9956999999999,
+        526.0008
+      ]
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "hard",
+      "puzzle_num": 2,
+      "puzzle": "100007090030020008009600500005300900010080002600004000300000010040000007007000300",
+      "time_ms": 3082.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        3082.0,
+        3089.0,
+        3072.0,
+        3083.0,
+        3059.0
+      ]
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "hard",
+      "puzzle_num": 2,
+      "puzzle": "100007090030020008009600500005300900010080002600004000300000010040000007007000300",
+      "time_ms": 192.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        192.0,
+        197.0,
+        192.0,
+        192.0,
+        193.0
+      ]
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "hard",
+      "puzzle_num": 2,
+      "puzzle": "100007090030020008009600500005300900010080002600004000300000010040000007007000300",
+      "time_ms": 47.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        47.0,
+        47.0,
+        47.0,
+        47.0,
+        47.0
+      ]
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "hard",
+      "puzzle_num": 2,
+      "puzzle": "100007090030020008009600500005300900010080002600004000300000010040000007007000300",
+      "time_ms": 49.9998,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        49.9998,
+        49.9982,
+        53.0102,
+        50.004,
+        49.001000000000005
+      ]
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "hard",
+      "puzzle_num": 2,
+      "puzzle": "100007090030020008009600500005300900010080002600004000300000010040000007007000300",
+      "time_ms": 488.0042,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        492.0,
+        484.0,
+        488.0042,
+        479.9983,
+        519.0061000000001
+      ]
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "hard",
+      "puzzle_num": 2,
+      "puzzle": "100007090030020008009600500005300900010080002600004000300000010040000007007000300",
+      "time_ms": 542.9996,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        540.9975000000001,
+        542.9996,
+        594.5947,
+        545.4347,
+        528.0038000000001
+      ]
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "hard",
+      "puzzle_num": 3,
+      "puzzle": "850002400720000009004000000000107002305000900040000000000080070017000000000036040",
+      "time_ms": 120000,
+      "success": false,
+      "timeout": true,
+      "error": "Timeout",
+      "all_times": []
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "hard",
+      "puzzle_num": 3,
+      "puzzle": "850002400720000009004000000000107002305000900040000000000080070017000000000036040",
+      "time_ms": 4081.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        4093.0,
+        4054.0,
+        4089.0,
+        4070.0,
+        4081.0
+      ]
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "hard",
+      "puzzle_num": 3,
+      "puzzle": "850002400720000009004000000000107002305000900040000000000080070017000000000036040",
+      "time_ms": 28.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        28.0,
+        28.0,
+        28.0,
+        28.0,
+        28.0
+      ]
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "hard",
+      "puzzle_num": 3,
+      "puzzle": "850002400720000009004000000000107002305000900040000000000080070017000000000036040",
+      "time_ms": 49.9977,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        69.9937,
+        52.991099999999996,
+        49.000299999999996,
+        49.9977,
+        49.0036
+      ]
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "hard",
+      "puzzle_num": 3,
+      "puzzle": "850002400720000009004000000000107002305000900040000000000080070017000000000036040",
+      "time_ms": 472.0039,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        472.0032,
+        475.1209,
+        469.9966,
+        472.0039,
+        507.32849999999996
+      ]
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "hard",
+      "puzzle_num": 3,
+      "puzzle": "850002400720000009004000000000107002305000900040000000000080070017000000000036040",
+      "time_ms": 519.5047000000001,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        519.6717,
+        519.0,
+        519.0049,
+        519.5047000000001,
+        521.9998
+      ]
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "hard",
+      "puzzle_num": 4,
+      "puzzle": "006000300000090000900004006000070010050800020010050000300400001000020000005000900",
+      "time_ms": 1174.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        1158.0,
+        1174.0,
+        1168.0,
+        1197.0,
+        1194.0
+      ]
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "hard",
+      "puzzle_num": 4,
+      "puzzle": "006000300000090000900004006000070010050800020010050000300400001000020000005000900",
+      "time_ms": 74.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        76.0,
+        74.0,
+        74.0,
+        73.0,
+        74.0
+      ]
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "hard",
+      "puzzle_num": 4,
+      "puzzle": "006000300000090000900004006000070010050800020010050000300400001000020000005000900",
+      "time_ms": 49.0,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        49.0,
+        49.0,
+        49.0,
+        49.0,
+        49.0
+      ]
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "hard",
+      "puzzle_num": 4,
+      "puzzle": "006000300000090000900004006000070010050800020010050000300400001000020000005000900",
+      "time_ms": 48.9998,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        48.9964,
+        49.0047,
+        48.9998,
+        49.0285,
+        48.000099999999996
+      ]
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "hard",
+      "puzzle_num": 4,
+      "puzzle": "006000300000090000900004006000070010050800020010050000300400001000020000005000900",
+      "time_ms": 474.3982,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        474.3982,
+        471.0034,
+        473.331,
+        492.5773,
+        478.99789999999996
+      ]
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "hard",
+      "puzzle_num": 4,
+      "puzzle": "006000300000090000900004006000070010050800020010050000300400001000020000005000900",
+      "time_ms": 521.0539,
+      "success": true,
+      "timeout": false,
+      "error": null,
+      "all_times": [
+        521.0539,
+        545.0061000000001,
+        519.9996,
+        522.0038000000001,
+        517.9991
+      ]
+    }
+  ],
+  "statistics": [
+    {
+      "solver": "prolog_naive",
+      "difficulty": "easy",
+      "count": 4,
+      "mean_ms": 2002.0,
+      "median_ms": 750.5,
+      "min_ms": 66.0,
+      "max_ms": 6441.0,
+      "stddev_ms": 3024.3151290829464,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "easy",
+      "count": 4,
+      "mean_ms": 53.75,
+      "median_ms": 43.5,
+      "min_ms": 36.0,
+      "max_ms": 92.0,
+      "stddev_ms": 26.004807247891687,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "easy",
+      "count": 4,
+      "mean_ms": 17.25,
+      "median_ms": 18.0,
+      "min_ms": 12.0,
+      "max_ms": 21.0,
+      "stddev_ms": 4.112987559751022,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "easy",
+      "count": 4,
+      "mean_ms": 5.0039,
+      "median_ms": 5.00285,
+      "min_ms": 5.0007,
+      "max_ms": 5.0092,
+      "stddev_ms": 0.0040389767681099946,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "easy",
+      "count": 4,
+      "mean_ms": 2.747875,
+      "median_ms": 2.99575,
+      "min_ms": 1.9995,
+      "max_ms": 3.0005,
+      "stddev_ms": 0.49892918919755874,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "easy",
+      "count": 4,
+      "mean_ms": 3.0019,
+      "median_ms": 3.0020000000000002,
+      "min_ms": 2.9999,
+      "max_ms": 3.0037000000000003,
+      "stddev_ms": 0.0019798989873225188,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "medium",
+      "count": 4,
+      "mean_ms": 12046.0,
+      "median_ms": 386.0,
+      "min_ms": 93.0,
+      "max_ms": 47319.0,
+      "stddev_ms": 23516.10639540483,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "medium",
+      "count": 4,
+      "mean_ms": 31.25,
+      "median_ms": 33.5,
+      "min_ms": 21.0,
+      "max_ms": 37.0,
+      "stddev_ms": 7.32006375199925,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "medium",
+      "count": 4,
+      "mean_ms": 68962.394375,
+      "median_ms": 68881.73415,
+      "min_ms": 68537.5368,
+      "max_ms": 69548.5724,
+      "stddev_ms": 452.4929227500814,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "medium",
+      "count": 4,
+      "mean_ms": 2147.679475,
+      "median_ms": 2133.59595,
+      "min_ms": 2112.9684,
+      "max_ms": 2210.5576,
+      "stddev_ms": 43.051421760601215,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "medium",
+      "count": 4,
+      "mean_ms": 15.998524999999999,
+      "median_ms": 15.9988,
+      "min_ms": 15.996199999999998,
+      "max_ms": 16.0003,
+      "stddev_ms": 0.0017114808402866565,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "medium",
+      "count": 1,
+      "mean_ms": 6354.0,
+      "median_ms": 6354.0,
+      "min_ms": 6354.0,
+      "max_ms": 6354.0,
+      "stddev_ms": 0.0,
+      "success_rate": 0.25,
+      "timeout_count": 3
+    },
+    {
+      "solver": "prolog_naive",
+      "difficulty": "hard",
+      "count": 3,
+      "mean_ms": 7185.333333333333,
+      "median_ms": 3082.0,
+      "min_ms": 1174.0,
+      "max_ms": 17300.0,
+      "stddev_ms": 8811.355022545245,
+      "success_rate": 0.75,
+      "timeout_count": 1
+    },
+    {
+      "solver": "prolog_mrv",
+      "difficulty": "hard",
+      "count": 4,
+      "mean_ms": 3751.0,
+      "median_ms": 2136.5,
+      "min_ms": 74.0,
+      "max_ms": 10657.0,
+      "stddev_ms": 4966.170422636205,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "prolog_clp",
+      "difficulty": "hard",
+      "count": 4,
+      "mean_ms": 62.0,
+      "median_ms": 48.0,
+      "min_ms": 28.0,
+      "max_ms": 124.0,
+      "stddev_ms": 42.40283009422838,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "haskell_first",
+      "difficulty": "hard",
+      "count": 4,
+      "mean_ms": 49.746900000000004,
+      "median_ms": 49.994,
+      "min_ms": 48.9998,
+      "max_ms": 49.9998,
+      "stddev_ms": 0.4980833330544876,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "haskell_mrv",
+      "difficulty": "hard",
+      "count": 4,
+      "mean_ms": 479.108475,
+      "median_ms": 478.2129,
+      "min_ms": 472.0039,
+      "max_ms": 488.0042,
+      "stddev_ms": 7.310195860292229,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    },
+    {
+      "solver": "haskell_prop",
+      "difficulty": "hard",
+      "count": 4,
+      "mean_ms": 527.388475,
+      "median_ms": 523.5247999999999,
+      "min_ms": 519.5047000000001,
+      "max_ms": 542.9996,
+      "stddev_ms": 10.76921220652496,
+      "success_rate": 1.0,
+      "timeout_count": 0
+    }
+  ]
+}
