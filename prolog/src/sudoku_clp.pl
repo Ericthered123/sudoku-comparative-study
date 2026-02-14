@@ -51,9 +51,6 @@ sudoku(Filas) :-
     % 2. Normalizar celdas:
     %    - 0 → variable libre
     %    - variables y números quedan intactos
-    maplist(normalizar_celda, Vs),
-    % 3. RESTRICCIÓN DE DOMINIO:
-    %    Todas las variables deben estar en el rango 1..9
     Vs ins 1..9,
     
     % 4. RESTRICCIÓN DE FILAS:
@@ -82,19 +79,6 @@ sudoku(Filas) :-
     % labeling([bisect], Vs).  % Útil para dominios grandes 
     % TODO se podria fijar para hacer un benchmark con distintas heuristicas
 
-% ----------------------------------------------------------------------------
-% normalizar_celda(+Celda)
-%
-% Convierte una celda:
-%   - Si es 0 → queda como variable libre
-%   - Si es número 1..9 → queda fija
-%   - Si es variable → queda libre
-% ----------------------------------------------------------------------------
-normalizar_celda(Celda) :-
-    (   integer(Celda), Celda =:= 0
-    ->  Celda = _
-    ;   true
-    ).
 
 
 % ----------------------------------------------------------------------------
