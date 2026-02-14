@@ -22,7 +22,8 @@ dependencies:
   - array
   - containers
   - time
-
+  - deepseq
+  - clock
 ghc-options:
   - -Wall
   - -Wcompat
