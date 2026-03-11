@@ -8,3 +8,6 @@ May not work on Linux or MacOS environments[TODO]
 
 
 Authors: Eric Doyle and Bruno Lodeiro
+
+
+Made in tribute to Susana Nebuloni
