@@ -28,6 +28,8 @@ main = do
 processArgs :: [String] -> IO ()
 processArgs ("--bench-external":strat:rest) =
     runExternalBench strat (concat rest)
+processArgs ("--solve":strat:rest) =
+    runSolve strat (concat rest)
 processArgs ("--example":level:_) =
     runExample level
 processArgs ("--file":path:_) =
@@ -172,6 +174,7 @@ printHelp = putStrLn $ unlines
     , "  --file ARCHIVO                     Resolver desde archivo"
     , "  --benchmark                        Benchmarks con ejemplos predefinidos"
     , "  --bench-external STRAT PUZZLE81    Benchmark externo (usado por Python)"
+    , "  --solve STRAT PUZZLE81            Resolver y devolver solución (usado por backend)"
     , "  --help                             Mostrar esta ayuda"
     , ""
     , "ESTRATEGIAS para --bench-external:"
@@ -226,3 +229,35 @@ runExternalBench strat puzzleStr = do
             t2 <- getTime Monotonic
             let elapsedSecs = fromIntegral (toNanoSecs t2 - toNanoSecs t1) / (1e9 :: Double)
             printf "%.9f\n" elapsedSecs
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- | Modo solve: imprime tiempo + solución. Usado por el backend web.
+--
+--   Firma de llamada:
+--     sudoku-exe --solve <strat> <puzzle81>
+--
+--   Salida línea 1: tiempo en segundos (mismo formato que --bench-external)
+--   Salida línea 2: solución como 81 dígitos, o "NO_SOLUTION"
+-- ─────────────────────────────────────────────────────────────────────────────
+runSolve :: String -> String -> IO ()
+runSolve strat puzzleStr = do
+    let strategy = case strat of
+            "fe"   -> FirstEmpty
+            "mrv"  -> MostConstrained
+            "pmrv" -> PropagationMRV
+            _      -> error $ "Estrategia inválida: " ++ strat
+
+    case parseBoard puzzleStr of
+        Nothing -> do
+            hPutStrLn stderr "Error: puzzle inválido"
+            exitFailure
+        Just board -> do
+            t1 <- getTime Monotonic
+            let result = solveWithStrategy strategy board
+            result `seq` return ()
+            t2 <- getTime Monotonic
+            let elapsedSecs = fromIntegral (toNanoSecs t2 - toNanoSecs t1) / (1e9 :: Double)
+            printf "%.9f\n" elapsedSecs
+            case result of
+                Nothing  -> putStrLn "NO_SOLUTION"
+                Just sol -> putStrLn (boardToString sol)

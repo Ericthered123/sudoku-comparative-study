@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudoku Comparative Study</title>
+<style>
+  /* ── Reset & base ─────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    min-height: 100vh;
+  }
+
+  /* ── Layout ───────────────────────────────────────────── */
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #fff;
+    padding: 1.5rem 2rem;
+    text-align: center;
+  }
+  .header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: .5px; }
+  .header p  { font-size: .85rem; opacity: .7; margin-top: .3rem; }
+
+  .main { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
+
+  /* ── Panel de entrada ─────────────────────────────────── */
+  .input-panel {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    margin-bottom: 2rem;
+  }
+  .input-panel h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #444; }
+
+  .controls {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+  }
+  .controls select, .controls button {
+    padding: .5rem .9rem;
+    border-radius: 8px;
+    font-size: .85rem;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    transition: all .15s;
+  }
+  .controls select { background: #fafafa; }
+  .controls select:focus { outline: none; border-color: #4e9af1; }
+
+  .btn-load {
+    background: #eaf4ff;
+    color: #1a6fc4;
+    border-color: #b3d4f5 !important;
+    font-weight: 500;
+  }
+  .btn-load:hover { background: #d1e9ff; }
+
+  .btn-solve {
+    background: #1a6fc4;
+    color: #fff;
+    border-color: #1a6fc4 !important;
+    font-weight: 600;
+    padding: .5rem 1.4rem !important;
+  }
+  .btn-solve:hover { background: #1558a0; }
+  .btn-solve:disabled { background: #9ec4e8; cursor: not-allowed; }
+
+  .btn-clear {
+    background: #fff5f5;
+    color: #c0392b;
+    border-color: #f5c6c6 !important;
+  }
+  .btn-clear:hover { background: #ffe8e8; }
+
+  /* ── Grid de entrada ──────────────────────────────────── */
+  .sudoku-grid {
+    display: inline-grid;
+    grid-template-columns: repeat(9, 44px);
+    grid-template-rows: repeat(9, 44px);
+    gap: 1px;
+    background: #999;
+    border: 2px solid #333;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .sudoku-grid input {
+    width: 44px; height: 44px;
+    border: none;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: #fff;
+    color: #1a1a2e;
+    outline: none;
+    cursor: text;
+    caret-color: #4e9af1;
+    transition: background .1s;
+  }
+  .sudoku-grid input:focus { background: #eaf4ff; }
+  .sudoku-grid input.given { color: #1a1a2e; background: #f7f7f7; }
+  /* Bordes de cajas 3×3 */
+  .sudoku-grid input:nth-child(3n+4):not(:nth-child(10n)) { border-left: 2px solid #333; }
+  /* filas: después de 18 y 45 inputs, insertar borde inferior grueso */
+  .sudoku-grid input:nth-child(n+19):nth-child(-n+27),
+  .sudoku-grid input:nth-child(n+46):nth-child(-n+54) {
+    border-bottom: 2px solid #333;
+  }
+
+  /* ── Error banner ─────────────────────────────────────── */
+  .error-banner {
+    display: none;
+    background: #ffe8e8;
+    color: #c0392b;
+    border: 1px solid #f5c6c6;
+    border-radius: 8px;
+    padding: .75rem 1rem;
+    margin-top: 1rem;
+    font-size: .9rem;
+  }
+
+  /* ── Spinner ──────────────────────────────────────────── */
+  .spinner-wrap {
+    display: none;
+    align-items: center;
+    gap: .75rem;
+    margin: 1.5rem 0;
+    color: #555;
+    font-size: .9rem;
+  }
+  .spinner {
+    width: 24px; height: 24px;
+    border: 3px solid #ddd;
+    border-top-color: #1a6fc4;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Sección de resultados ────────────────────────────── */
+  #results-section { display: none; }
+
+  .results-grids {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  @media (max-width: 760px) {
+    .results-grids { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .results-grids { grid-template-columns: 1fr; }
+  }
+
+  .solver-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+  }
+  .solver-card h3 {
+    font-size: .8rem;
+    font-weight: 700;
+    margin-bottom: .6rem;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+  .badge-prolog {
+    background: #dbeafe; color: #1a6fc4;
+    padding: 2px 6px; border-radius: 4px; font-size: .7rem;
+  }
+  .badge-haskell {
+    background: #fef3c7; color: #b45309;
+    padding: 2px 6px; border-radius: 4px; font-size: .7rem;
+  }
+  .solver-time {
+    font-size: .75rem; color: #666;
+    margin-bottom: .5rem;
+  }
+
+  /* ── Mini grid de resultado ───────────────────────────── */
+  .mini-grid {
+    display: inline-grid;
+    grid-template-columns: repeat(9, 22px);
+    grid-template-rows: repeat(9, 22px);
+    gap: 1px;
+    background: #bbb;
+    border: 1.5px solid #555;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .mini-grid span {
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .7rem; font-weight: 600;
+  }
+  .mini-grid span.cell-given   { background: #f7f7f7; color: #1a1a2e; }
+  .mini-grid span.cell-solved-prolog  { background: #dbeafe; color: #1a6fc4; }
+  .mini-grid span.cell-solved-haskell { background: #fef3c7; color: #b45309; }
+  /* Bordes 3×3 en mini grid */
+  .mini-grid span:nth-child(3n+4) { border-left: 1.5px solid #555; }
+  .mini-grid span:nth-child(n+19):nth-child(-n+27),
+  .mini-grid span:nth-child(n+46):nth-child(-n+54) {
+    border-bottom: 1.5px solid #555;
+  }
+
+  .solver-error {
+    color: #c0392b; font-size: .8rem; padding: .5rem 0;
+    display: flex; align-items: center; gap: .3rem;
+  }
+
+  /* ── Charts & stats ───────────────────────────────────── */
+  .chart-section, .stats-section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    margin-bottom: 1.5rem;
+  }
+  .chart-section h2, .stats-section h2 {
+    font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #444;
+  }
+  #bar-chart { overflow-x: auto; }
+  #bar-chart svg { max-width: 100%; }
+
+  .stats-section table {
+    width: 100%; border-collapse: collapse; font-size: .85rem;
+  }
+  .stats-section th {
+    background: #f0f2f5; padding: .5rem .75rem;
+    text-align: left; font-weight: 600; color: #555;
+    border-bottom: 2px solid #ddd;
+  }
+  .stats-section td {
+    padding: .5rem .75rem;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .stats-section tr:last-child td { border-bottom: none; }
+  .stats-section tr:hover td { background: #fafafa; }
+  .rank-1 td:first-child { font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <h1>Sudoku Comparative Study</h1>
+  <p>Prolog (Naive BT · MRV · CLP(FD)) &nbsp;vs&nbsp; Haskell (FirstEmpty · MRV · PropMRV)</p>
+</header>
+
+<main class="main">
+
+  <!-- Panel de entrada -->
+  <div class="input-panel">
+    <h2>Ingresar puzzle</h2>
+    <div class="controls">
+      <select id="difficulty">
+        <option value="easy">Fácil</option>
+        <option value="medium">Medio</option>
+        <option value="hard">Difícil</option>
+      </select>
+      <button class="btn-load" onclick="loadRandomPuzzle()">Cargar puzzle aleatorio</button>
+      <button class="btn-clear" onclick="clearGrid()">Limpiar</button>
+      <button class="btn-solve" id="btn-solve" onclick="solveAll()">Resolver con los 6 solvers</button>
+    </div>
+
+    <div id="grid-input" class="sudoku-grid"></div>
+    <div id="error-banner" class="error-banner"></div>
+  </div>
+
+  <!-- Spinner -->
+  <div id="spinner-wrap" class="spinner-wrap">
+    <div class="spinner"></div>
+    <span id="spinner-msg">Ejecutando los 6 solvers… puede tardar hasta 30s por solver difícil.</span>
+  </div>
+
+  <!-- Resultados -->
+  <div id="results-section">
+
+    <div class="results-grids" id="results-grids"></div>
+
+    <div class="chart-section">
+      <h2>Comparación de tiempos</h2>
+      <div id="bar-chart"></div>
+    </div>
+
+    <div class="stats-section">
+      <h2>Estadísticas</h2>
+      <div id="stats-table"></div>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+// ── Configuración ────────────────────────────────────────────────────────────
+const API = 'http://localhost:5000';
+
+const SOLVER_META = [
+  { id: 'prolog_naive',  label: 'Prolog Naive BT', lang: 'prolog'  },
+  { id: 'prolog_mrv',    label: 'Prolog MRV',      lang: 'prolog'  },
+  { id: 'prolog_clp',    label: 'Prolog CLP(FD)',   lang: 'prolog'  },
+  { id: 'haskell_fe',    label: 'Haskell FE',       lang: 'haskell' },
+  { id: 'haskell_mrv',   label: 'Haskell MRV',      lang: 'haskell' },
+  { id: 'haskell_pmrv',  label: 'Haskell PropMRV',  lang: 'haskell' },
+];
+
+// ── Construcción del grid de entrada ─────────────────────────────────────────
+const gridEl = document.getElementById('grid-input');
+
+function buildInputGrid() {
+  gridEl.innerHTML = '';
+  for (let i = 0; i < 81; i++) {
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.maxLength = 1;
+    inp.dataset.index = i;
+    inp.addEventListener('keydown', onCellKeydown);
+    inp.addEventListener('input',   onCellInput);
+    gridEl.appendChild(inp);
+  }
+}
+
+function onCellKeydown(e) {
+  const allowed = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
+  if (allowed.includes(e.key)) return;
+  if (e.key >= '1' && e.key <= '9') return;
+  e.preventDefault();
+}
+
+function onCellInput(e) {
+  const v = e.target.value;
+  if (!/^[1-9]$/.test(v)) e.target.value = '';
+}
+
+function readGrid() {
+  return Array.from(gridEl.querySelectorAll('input'))
+    .map(i => i.value || '0')
+    .join('');
+}
+
+function fillGrid(puzzle) {
+  const inputs = gridEl.querySelectorAll('input');
+  for (let i = 0; i < 81; i++) {
+    const v = puzzle[i];
+    inputs[i].value = (v && v !== '0') ? v : '';
+    inputs[i].classList.toggle('given', v && v !== '0');
+    inputs[i].readOnly = (v && v !== '0');
+  }
+  hideError();
+}
+
+function clearGrid() {
+  const inputs = gridEl.querySelectorAll('input');
+  inputs.forEach(inp => {
+    inp.value = '';
+    inp.classList.remove('given');
+    inp.readOnly = false;
+  });
+  document.getElementById('results-section').style.display = 'none';
+  hideError();
+}
+
+// ── Cargar puzzle aleatorio ───────────────────────────────────────────────────
+async function loadRandomPuzzle() {
+  const difficulty = document.getElementById('difficulty').value;
+  try {
+    const res = await fetch(`${API}/api/puzzles?difficulty=${difficulty}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (!data.puzzles || data.puzzles.length === 0) {
+      showError('No se encontraron puzzles para esa dificultad.');
+      return;
+    }
+    const puzzle = data.puzzles[Math.floor(Math.random() * data.puzzles.length)];
+    fillGrid(puzzle);
+    document.getElementById('results-section').style.display = 'none';
+  } catch (err) {
+    showError('No se pudo conectar al backend: ' + err.message);
+  }
+}
+
+// ── Resolver ──────────────────────────────────────────────────────────────────
+async function solveAll() {
+  const puzzle = readGrid();
+  const clues = puzzle.replace(/0/g, '').length;
+
+  if (clues === 0) {
+    showError('El tablero está vacío. Ingresá un puzzle o cargá uno aleatorio.');
+    return;
+  }
+
+  hideError();
+  showSpinner(true);
+  document.getElementById('btn-solve').disabled = true;
+  document.getElementById('results-section').style.display = 'none';
+
+  try {
+    const res = await fetch(`${API}/api/solve`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ puzzle }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    console.log('[DEBUG] Respuesta del backend:', JSON.stringify(data, null, 2));
+    renderResults(data);
+  } catch (err) {
+    showError('Error: ' + err.message);
+  } finally {
+    showSpinner(false);
+    document.getElementById('btn-solve').disabled = false;
+  }
+}
+
+// ── Render resultados ─────────────────────────────────────────────────────────
+function renderResults(data) {
+  const original = data.puzzle;
+  const results  = data.results;
+
+  // Detectar si todos los solvers dicen "sin solución"
+  const allNoSolution = Object.values(results).every(r => r?.no_solution === true);
+  if (allNoSolution) {
+    showError('Este puzzle no tiene solución válida. Probá con otro puzzle.');
+    document.getElementById('results-section').style.display = 'none';
+    return;
+  }
+
+  renderGrids(original, results);
+  renderBarChart(results);
+  renderStatsTable(results);
+
+  document.getElementById('results-section').style.display = 'block';
+  document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderGrids(original, results) {
+  const container = document.getElementById('results-grids');
+  container.innerHTML = '';
+
+  for (const meta of SOLVER_META) {
+    const r = results[meta.id];
+    const card = document.createElement('div');
+    card.className = 'solver-card';
+
+    const badge = `<span class="badge-${meta.lang}">${meta.lang === 'prolog' ? 'Prolog' : 'Haskell'}</span>`;
+    card.innerHTML = `<h3>${badge} ${meta.label}</h3>`;
+
+    if (!r || !r.success) {
+      if (r?.no_solution) {
+        const timeStr = r.time_ms != null ? r.time_ms.toFixed(3) + ' ms' : '—';
+        card.innerHTML += `<div class="solver-time">⏱ ${timeStr}</div>`;
+        card.innerHTML += `<div class="solver-error">✗ Sin solución</div>`;
+      } else if (r?.timeout) {
+        card.innerHTML += `<div class="solver-error">⏱ Timeout (&gt;30s)</div>`;
+      } else {
+        card.innerHTML += `<div class="solver-error">✗ ${r?.error || 'Error desconocido'}</div>`;
+      }
+    } else if (!r.solution) {
+      const timeStr = r.time_ms != null ? r.time_ms.toFixed(3) + ' ms' : '—';
+      card.innerHTML += `<div class="solver-time">⏱ ${timeStr}</div>`;
+      card.innerHTML += `<div class="solver-error">⚠ Solución no disponible (reconstruí con stack build)</div>`;
+    } else {
+      const timeStr = r.time_ms != null ? r.time_ms.toFixed(3) + ' ms' : '—';
+      card.innerHTML += `<div class="solver-time">⏱ ${timeStr}</div>`;
+      card.appendChild(buildMiniGrid(original, r.solution, meta.lang));
+    }
+
+    container.appendChild(card);
+  }
+}
+
+function buildMiniGrid(original, solution, lang) {
+  const grid = document.createElement('div');
+  grid.className = 'mini-grid';
+
+  for (let i = 0; i < 81; i++) {
+    const span = document.createElement('span');
+    const isGiven = original[i] !== '0';
+    const val = solution ? solution[i] : original[i];
+    span.textContent = (val && val !== '0') ? val : '';
+
+    if (isGiven) {
+      span.className = 'cell-given';
+    } else {
+      span.className = lang === 'prolog' ? 'cell-solved-prolog' : 'cell-solved-haskell';
+    }
+
+    grid.appendChild(span);
+  }
+  return grid;
+}
+
+function renderBarChart(results) {
+  const entries = SOLVER_META
+    .map(m => ({ ...m, time: results[m.id]?.success ? results[m.id].time_ms : null }));
+
+  const valid   = entries.filter(e => e.time !== null);
+  const maxTime = valid.length ? Math.max(...valid.map(e => e.time)) : 1;
+
+  const W = 640, PADL = 160, PADR = 100, PADT = 20, BAR_H = 28, GAP = 8;
+  const totalH = PADT + entries.length * (BAR_H + GAP) + 20;
+  const barW   = W - PADL - PADR;
+
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${totalH}" font-family="'Segoe UI',system-ui,sans-serif">`;
+
+  entries.forEach((e, i) => {
+    const y = PADT + i * (BAR_H + GAP);
+    const color = e.lang === 'prolog' ? '#4e9af1' : '#f1a94e';
+    const w = e.time !== null ? Math.max(2, (e.time / maxTime) * barW) : 0;
+
+    // Etiqueta
+    svg += `<text x="${PADL - 8}" y="${y + BAR_H/2 + 5}" text-anchor="end" font-size="12" fill="#444">${e.label}</text>`;
+
+    if (e.time !== null) {
+      svg += `<rect x="${PADL}" y="${y}" width="${w}" height="${BAR_H}" fill="${color}" rx="4" opacity=".85"/>`;
+      svg += `<text x="${PADL + w + 6}" y="${y + BAR_H/2 + 5}" font-size="11" fill="#333">${e.time.toFixed(3)} ms</text>`;
+    } else {
+      svg += `<rect x="${PADL}" y="${y}" width="4" height="${BAR_H}" fill="#ddd" rx="2"/>`;
+      svg += `<text x="${PADL + 10}" y="${y + BAR_H/2 + 5}" font-size="11" fill="#c0392b">FAILED / TIMEOUT</text>`;
+    }
+  });
+
+  svg += '</svg>';
+  document.getElementById('bar-chart').innerHTML = svg;
+}
+
+function renderStatsTable(results) {
+  const entries = SOLVER_META
+    .map(m => ({ ...m, time: results[m.id]?.success ? results[m.id].time_ms : null }))
+    .filter(e => e.time !== null)
+    .sort((a, b) => a.time - b.time);
+
+  if (entries.length === 0) {
+    document.getElementById('stats-table').innerHTML = '<p style="color:#999;font-size:.85rem">Ningún solver completó con éxito.</p>';
+    return;
+  }
+
+  const slowest = entries[entries.length - 1].time;
+
+  let html = `<table>
+    <thead><tr>
+      <th>#</th><th>Solver</th><th>Tiempo (ms)</th><th>Speedup vs más lento</th>
+    </tr></thead><tbody>`;
+
+  entries.forEach((e, idx) => {
+    const speedup = (slowest / e.time).toFixed(2);
+    const cls = idx === 0 ? ' class="rank-1"' : '';
+    html += `<tr${cls}>
+      <td>${idx + 1}</td>
+      <td>${e.label}</td>
+      <td>${e.time.toFixed(4)}</td>
+      <td>${speedup}×</td>
+    </tr>`;
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('stats-table').innerHTML = html;
+}
+
+// ── Helpers UI ────────────────────────────────────────────────────────────────
+function showError(msg) {
+  const el = document.getElementById('error-banner');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function hideError() {
+  document.getElementById('error-banner').style.display = 'none';
+}
+function showSpinner(visible) {
+  const el = document.getElementById('spinner-wrap');
+  el.style.display = visible ? 'flex' : 'none';
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+buildInputGrid();
+</script>
+
+</body>
+</html>
