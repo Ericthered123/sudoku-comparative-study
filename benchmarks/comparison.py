@@ -185,6 +185,7 @@ def _make_prolog_script_naive(puzzle: str, src: Path) -> str:
     """
     Script para el solver Naive BT. Entrada: lista con 'x' para vacíos.
     Usa get_time/1 para resolución sub-ms en Windows (QueryPerformanceCounter).
+    Línea 1: tiempo en ms. Línea 2: solución como 81 dígitos (si exitoso).
     """
     return f""":- use_module(library(lists)).
 :- consult('{src.as_posix()}').
@@ -192,10 +193,11 @@ def _make_prolog_script_naive(puzzle: str, src: Path) -> str:
 main :-
     Input = {puzzle_to_prolog_list(puzzle)},
     get_time(T1),
-    ( sudoku(Input, _) -> true ; true ),
+    ( sudoku(Input, Sol) -> true ; Sol = [] ),
     get_time(T2),
     Elapsed is (T2 - T1) * 1000.0,
     format('~6f~n', [Elapsed]),
+    ( Sol \\= [] -> maplist(write, Sol), nl ; true ),
     halt.
 """
 
@@ -203,6 +205,7 @@ def _make_prolog_script_mrv(puzzle: str, src: Path) -> str:
     """
     Script para el solver MRV. Entrada: lista con 'x' para vacíos.
     Usa get_time/1 para resolución sub-ms en Windows (QueryPerformanceCounter).
+    Línea 1: tiempo en ms. Línea 2: solución como 81 dígitos (si exitoso).
     """
     return f""":- use_module(library(lists)).
 :- consult('{src.as_posix()}').
@@ -210,10 +213,11 @@ def _make_prolog_script_mrv(puzzle: str, src: Path) -> str:
 main :-
     Input = {puzzle_to_prolog_list(puzzle)},
     get_time(T1),
-    ( resolver(Input, _) -> true ; true ),
+    ( resolver(Input, Sol) -> true ; Sol = [] ),
     get_time(T2),
     Elapsed is (T2 - T1) * 1000.0,
     format('~6f~n', [Elapsed]),
+    ( Sol \\= [] -> maplist(write, Sol), nl ; true ),
     halt.
 """
 
@@ -232,6 +236,7 @@ def _make_prolog_script_clp(puzzle: str, src: Path) -> str:
     Usa get_time/1 para resolución sub-ms en Windows (QueryPerformanceCounter).
     """
     return f""":- use_module(library(clpfd)).
+:- use_module(library(lists)).
 :- consult('{src.as_posix()}').
 :- initialization(main, main).
 
@@ -252,6 +257,8 @@ main :-
     get_time(T2),
     Elapsed is (T2 - T1) * 1000.0,
     format('~6f~n', [Elapsed]),
+    append(Matrix, FlatSol),
+    ( ground(FlatSol) -> maplist(write, FlatSol), nl ; write('NO_SOLUTION'), nl ),
     halt.
 """
 
