@@ -2,11 +2,13 @@
 
 ## Descripción del proyecto
 
-Estudio comparativo de solvers de Sudoku implementados en **Prolog** (3 variantes) y **Haskell** (3 variantes), desarrollado como proyecto final de _Programación Lógica y Funcional_ en la **UNNOBA** (2026).
+Estudio comparativo de solvers de Sudoku implementados en **Prolog** (3 variantes) y **Haskell** (3 variantes), originado como proyecto final de _Programación Lógica y Funcional_ en la **UNNOBA** (2026).
 
 Autores: Eric Doyle y Bruno Lodeiro.
 
-El proyecto incluye una **interfaz web** que permite ingresar un puzzle, resolverlo con los 6 solvers simultáneamente y comparar tiempos con gráficos.
+**Estado**: la materia ya fue aprobada — calificación **10/10** (evaluado incluso sin la UI). El proyecto continúa como **proyecto personal de Eric**, extendido por interés en el tema. Implicancias para el trabajo futuro: no hay deadlines ni requisitos de cátedra; las prioridades las marca `IMPROVEMENTS.md` y el criterio es aprender/experimentar, no entregar.
+
+El proyecto incluye una **interfaz web** que permite ingresar un puzzle, resolverlo con los 6 solvers y comparar tiempos con gráficos (resultados en vivo, tema claro/oscuro, ES/EN).
 
 ---
 
