@@ -108,7 +108,6 @@ the study sets out to measure.
 | [`prolog/README.md`](prolog/README.md) | Prolog solvers: usage, predicates, tests |
 | [`haskell/README.md`](haskell/README.md) | Haskell package: build, CLI, tests |
 | [`benchmarks/README.md`](benchmarks/README.md) | Benchmark runner, puzzle sets, output files |
-| [`IMPROVEMENTS.md`](IMPROVEMENTS.md) | Roadmap of pending improvements |
 | [`CLAUDE.md`](CLAUDE.md) | Full command reference (build, run, benchmark) |
 
 ## Project layout

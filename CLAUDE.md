@@ -6,7 +6,7 @@ Estudio comparativo de solvers de Sudoku implementados en **Prolog** (3 variante
 
 Autores: Eric Doyle y Bruno Lodeiro.
 
-**Estado**: la materia ya fue aprobada — calificación **10/10** (evaluado incluso sin la UI). El proyecto continúa como **proyecto personal de Eric**, extendido por interés en el tema. Implicancias para el trabajo futuro: no hay deadlines ni requisitos de cátedra; las prioridades las marca `IMPROVEMENTS.md` y el criterio es aprender/experimentar, no entregar.
+**Estado**: la materia ya fue aprobada — calificación **10/10** (evaluado incluso sin la UI). El proyecto continúa como **proyecto personal de Eric**, extendido por interés en el tema. Implicancias para el trabajo futuro: no hay deadlines ni requisitos de cátedra; las prioridades las marca `IMPROVEMENTS.md` (archivo de planning **local de Eric, git-ignoreado** — no referenciarlo desde docs del repo) y el criterio es aprender/experimentar, no entregar.
 
 El proyecto incluye una **interfaz web** que permite ingresar un puzzle, resolverlo con los 6 solvers y comparar tiempos con gráficos (resultados en vivo, tema claro/oscuro, ES/EN).
 

@@ -120,4 +120,4 @@ Lecturas principales:
 
 > Advertencia metodológica: una corrida por puzzle sobre wall clock. Para
 > conclusiones más sólidas conviene mediana de N corridas y contar
-> backtracks/nodos explorados (ver `IMPROVEMENTS.md` §2).
+> backtracks/nodos explorados.

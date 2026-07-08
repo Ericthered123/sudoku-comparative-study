@@ -10,4 +10,3 @@ Documentación por componente:
 - [`../prolog/README.md`](../prolog/README.md) — solvers Prolog
 - [`../haskell/README.md`](../haskell/README.md) — paquete Haskell
 - [`../benchmarks/README.md`](../benchmarks/README.md) — benchmarks y datos
-- [`../IMPROVEMENTS.md`](../IMPROVEMENTS.md) — roadmap de mejoras pendientes

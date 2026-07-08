@@ -42,6 +42,6 @@ Para las figuras: `matplotlib` y `numpy`.
 - Los solvers corren **secuencialmente** para no competir por CPU.
 - Timeout: 30 s por (solver, puzzle); los timeouts cuentan como fallo y quedan
   registrados en el CSV.
-- Limitación conocida: una corrida por puzzle. El roadmap
-  (`../IMPROVEMENTS.md` §2) contempla N corridas con mediana y conteo de
-  backtracks para una comparación independiente de la máquina.
+- Limitación conocida: una corrida por puzzle. Queda pendiente N corridas con
+  mediana y conteo de backtracks para una comparación independiente de la
+  máquina.

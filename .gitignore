@@ -29,3 +29,6 @@ __pycache__/
 
 # Tooling
 .playwright-mcp/
+
+# Planning interno (solo local)
+IMPROVEMENTS.md
