@@ -113,6 +113,15 @@ def test_solve_one_normalizes_dots(client, fake_solvers):
     assert fake_solvers == [("prolog_naive", VALID_PUZZLE)]
 
 
+# ── Servir el frontend desde Flask (para Docker / single-container) ─────────
+
+def test_root_serves_frontend(client):
+    res = client.get("/")
+    assert res.status_code == 200
+    assert "text/html" in res.content_type
+    assert b"Sudoku Comparative Study" in res.data
+
+
 # ── run_process: binario inexistente no debe explotar ───────────────────────
 
 def test_run_process_handles_missing_binary():

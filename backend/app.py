@@ -21,11 +21,18 @@ import subprocess
 import tempfile
 import statistics
 from pathlib import Path
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
+
+FRONTEND_DIR = Path(__file__).parent.parent / "frontend"
+
+
+@app.route('/', methods=['GET'])
+def serve_frontend():
+    return send_from_directory(FRONTEND_DIR, 'index.html')
 
 
 def is_solvable(puzzle: str) -> bool:
@@ -373,4 +380,8 @@ def api_solve_one():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(
+        host='0.0.0.0',
+        port=int(os.environ.get('PORT', 5000)),
+        debug=os.environ.get('FLASK_DEBUG', '1') == '1',
+    )
