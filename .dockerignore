@@ -1,0 +1,10 @@
+.git
+.gitignore
+.playwright-mcp
+**/__pycache__
+**/.pytest_cache
+haskell/.stack-work
+benchmarks/results
+docs
+examples
+*.md
