@@ -186,6 +186,20 @@ curl -X POST http://localhost:5000/api/solve \
      -d '{"puzzle":"003020600900305001001806400008102900700000008006708200002609500800203009005010300"}'
 ```
 
+### Docker (todo en un contenedor)
+
+```bash
+# Build (compila el solver Haskell adentro; la primera vez tarda varios minutos)
+docker build -t sudoku-study .
+
+# Run — frontend + API en http://localhost:5000
+docker run --rm -p 5000:5000 sudoku-study
+```
+
+El contenedor incluye SWI-Prolog, el binario Haskell y el backend Flask, que
+además sirve el frontend en `/` (mismo origen, sin CORS). Variables: `PORT`
+(default 5000), `FLASK_DEBUG` (default 0 en Docker, 1 fuera).
+
 ### Abrir el frontend
 
 ```bash
