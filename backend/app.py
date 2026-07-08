@@ -6,6 +6,7 @@
 
 Rutas:
   POST /api/solve          { puzzle: "81chars" } → resultados 6 solvers
+  POST /api/solve_one      { puzzle: "81chars", solver: id } → resultado 1 solver
   GET  /api/puzzles        ?difficulty=easy|medium|hard → lista de puzzles
   GET  /api/health         → estado de swipl y haskell-exe
 
@@ -67,10 +68,10 @@ TIMEOUT      = 30   # segundos por solver
 
 def run_process(cmd, timeout):
     """Ejecuta proceso externo. Retorna (success, stdout, stderr, timed_out)."""
-    proc = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-    )
     try:
+        proc = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+        )
         stdout, stderr = proc.communicate(timeout=timeout)
         return proc.returncode == 0, stdout.strip(), stderr.strip(), False
     except subprocess.TimeoutExpired:
@@ -78,6 +79,7 @@ def run_process(cmd, timeout):
         proc.communicate()
         return False, "", "TIMEOUT", True
     except FileNotFoundError as e:
+        # En Windows, Popen lanza FileNotFoundError si el binario no está en PATH
         return False, "", str(e), False
 
 
@@ -277,6 +279,32 @@ def solve_haskell(puzzle, strat_key):
         "error": stderr[:200] if stderr else f"Salida inesperada: {stdout!r}"[:200]
     }
 
+# ── Dispatch y validación compartidos ────────────────────────────────────────
+
+SOLVER_DISPATCH = {
+    "prolog_naive": lambda p: solve_prolog(p, "naive"),
+    "prolog_mrv":   lambda p: solve_prolog(p, "mrv"),
+    "prolog_clp":   lambda p: solve_prolog(p, "clp"),
+    "haskell_fe":   lambda p: solve_haskell(p, "fe"),
+    "haskell_mrv":  lambda p: solve_haskell(p, "mrv"),
+    "haskell_pmrv": lambda p: solve_haskell(p, "pmrv"),
+}
+
+
+def _validate_puzzle(puzzle):
+    """Valida y normaliza el puzzle. Retorna (puzzle_normalizado, error)."""
+    if not puzzle or len(puzzle) != 81:
+        return None, "puzzle debe tener exactamente 81 caracteres"
+    if not re.match(r'^[0-9.]+$', puzzle):
+        return None, "puzzle solo puede contener dígitos 0-9 o '.'"
+
+    puzzle = puzzle.replace('.', '0')
+
+    if not is_solvable(puzzle):
+        return None, "El puzzle no tiene solución válida"
+
+    return puzzle, None
+
 # ── Rutas Flask ───────────────────────────────────────────────────────────────
 
 @app.route('/api/health', methods=['GET'])
@@ -308,39 +336,40 @@ def api_puzzles():
 @app.route('/api/solve', methods=['POST'])
 def api_solve():
     data = request.get_json(force=True, silent=True) or {}
-    puzzle = data.get('puzzle', '')
-
-    # Validación
-    if not puzzle or len(puzzle) != 81:
-        return jsonify({"error": "puzzle debe tener exactamente 81 caracteres"}), 400
-    if not re.match(r'^[0-9.]+$', puzzle):
-        return jsonify({"error": "puzzle solo puede contener dígitos 0-9 o '.'"}), 400
-
-    # Normalizar: '.' → '0'
-    puzzle = puzzle.replace('.', '0')
-
-    # Verificar que el puzzle tiene solución antes de lanzar los 6 solvers
-    if not is_solvable(puzzle):
-        return jsonify({"error": "El puzzle no tiene solución válida"}), 400
+    puzzle, error = _validate_puzzle(data.get('puzzle', ''))
+    if error:
+        return jsonify({"error": error}), 400
 
     # Ejecutar los 6 solvers secuencialmente
-    SOLVER_JOBS = [
-        ("prolog_naive",  lambda: solve_prolog(puzzle, "naive")),
-        ("prolog_mrv",    lambda: solve_prolog(puzzle, "mrv")),
-        ("prolog_clp",    lambda: solve_prolog(puzzle, "clp")),
-        ("haskell_fe",    lambda: solve_haskell(puzzle, "fe")),
-        ("haskell_mrv",   lambda: solve_haskell(puzzle, "mrv")),
-        ("haskell_pmrv",  lambda: solve_haskell(puzzle, "pmrv")),
-    ]
-
     results = {}
-    for solver_id, runner in SOLVER_JOBS:
+    for solver_id, runner in SOLVER_DISPATCH.items():
         try:
-            results[solver_id] = runner()
+            results[solver_id] = runner(puzzle)
         except Exception as e:
             results[solver_id] = {"success": False, "error": str(e)}
 
     return jsonify({"puzzle": puzzle, "results": results})
+
+
+@app.route('/api/solve_one', methods=['POST'])
+def api_solve_one():
+    data = request.get_json(force=True, silent=True) or {}
+    puzzle, error = _validate_puzzle(data.get('puzzle', ''))
+    if error:
+        return jsonify({"error": error}), 400
+
+    solver_id = data.get('solver', '')
+    runner = SOLVER_DISPATCH.get(solver_id)
+    if runner is None:
+        valid = ', '.join(SOLVER_DISPATCH)
+        return jsonify({"error": f"solver debe ser uno de: {valid}"}), 400
+
+    try:
+        result = runner(puzzle)
+    except Exception as e:
+        result = {"success": False, "error": str(e)}
+
+    return jsonify({"puzzle": puzzle, "solver": solver_id, "result": result})
 
 
 if __name__ == '__main__':
