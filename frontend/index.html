@@ -5,300 +5,409 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sudoku Comparative Study</title>
 <style>
+  /* ── Tokens ───────────────────────────────────────────── */
+  :root {
+    color-scheme: light;
+    --bg-page:        #f9f9f7;
+    --bg-surface:     #fcfcfb;
+    --bg-inset:       #f0efec;
+    --ink-primary:    #0b0b0b;
+    --ink-secondary:  #52514e;
+    --ink-muted:      #898781;
+    --gridline:       #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,.10);
+    --shadow:         0 1px 2px rgba(11,11,11,.05), 0 4px 14px rgba(11,11,11,.05);
+    --prolog:         #2a78d6;
+    --prolog-tint:    rgba(42,120,214,.13);
+    --haskell:        #eda100;
+    --haskell-tint:   rgba(237,161,0,.16);
+    --accent:         #2a78d6;
+    --accent-strong:  #1c5cab;
+    --on-accent:      #ffffff;
+    --danger:         #d03b3b;
+    --danger-tint:    rgba(208,59,59,.12);
+    --success:        #006300;
+    --focus:          rgba(42,120,214,.45);
+    --cell: 44px;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg-page:        #0d0d0d;
+    --bg-surface:     #1a1a19;
+    --bg-inset:       #262624;
+    --ink-primary:    #ffffff;
+    --ink-secondary:  #c3c2b7;
+    --ink-muted:      #898781;
+    --gridline:       #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,.10);
+    --shadow:         none;
+    --prolog:         #3987e5;
+    --prolog-tint:    rgba(57,135,229,.20);
+    --haskell:        #c98500;
+    --haskell-tint:   rgba(201,133,0,.22);
+    --accent:         #3987e5;
+    --accent-strong:  #5598e7;
+    --on-accent:      #ffffff;
+    --danger:         #e66767;
+    --danger-tint:    rgba(230,103,103,.16);
+    --success:        #0ca30c;
+    --focus:          rgba(57,135,229,.55);
+  }
+
   /* ── Reset & base ─────────────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: #f0f2f5;
-    color: #1a1a2e;
+    font-family: system-ui, 'Segoe UI', sans-serif;
+    background: var(--bg-page);
+    color: var(--ink-primary);
     min-height: 100vh;
+    transition: background .2s, color .2s;
   }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+
+  /* ── Header ───────────────────────────────────────────── */
+  .header {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .header-titles h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: .2px; }
+  .header-titles p  { font-size: .8rem; color: var(--ink-secondary); margin-top: .15rem; }
+  .header-tools { display: flex; align-items: center; gap: .6rem; }
+
+  .backend-status {
+    display: inline-flex; align-items: center; gap: .35rem;
+    font-size: .75rem; color: var(--ink-muted);
+  }
+  .backend-status .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--ink-muted);
+  }
+  .backend-status.ok .dot   { background: var(--success); }
+  .backend-status.down .dot { background: var(--danger); }
+
+  .seg {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-surface);
+  }
+  .seg button {
+    border: none; background: none; cursor: pointer;
+    padding: .35rem .6rem; font-size: .78rem; font-weight: 600;
+    color: var(--ink-muted);
+  }
+  .seg button.active { background: var(--bg-inset); color: var(--ink-primary); }
+  .seg button:hover:not(.active) { color: var(--ink-secondary); }
+
+  .btn-theme {
+    border: 1px solid var(--border); background: var(--bg-surface);
+    border-radius: 8px; cursor: pointer;
+    padding: .32rem .55rem; font-size: .9rem; line-height: 1;
+  }
+  .btn-theme:hover { background: var(--bg-inset); }
 
   /* ── Layout ───────────────────────────────────────────── */
-  .header {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    color: #fff;
-    padding: 1.5rem 2rem;
-    text-align: center;
-  }
-  .header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: .5px; }
-  .header p  { font-size: .85rem; opacity: .7; margin-top: .3rem; }
-
-  .main { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
-
-  /* ── Panel de entrada ─────────────────────────────────── */
-  .input-panel {
-    background: #fff;
+  .main { max-width: 1150px; margin: 0 auto; padding: 1.75rem 1rem 3rem; }
+  .panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 12px rgba(0,0,0,.08);
-    margin-bottom: 2rem;
+    padding: 1.4rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
   }
-  .input-panel h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #444; }
+  .panel > h2 {
+    font-size: .95rem; font-weight: 650; margin-bottom: 1rem;
+    color: var(--ink-primary);
+  }
 
-  .controls {
-    display: flex;
-    gap: .75rem;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 1.25rem;
+  /* ── Controles ────────────────────────────────────────── */
+  .controls { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .controls select {
+    padding: .45rem .7rem; border-radius: 8px; font-size: .85rem; cursor: pointer;
+    border: 1px solid var(--border); background: var(--bg-surface); color: var(--ink-primary);
   }
-  .controls select, .controls button {
-    padding: .5rem .9rem;
-    border-radius: 8px;
-    font-size: .85rem;
-    cursor: pointer;
-    border: 1px solid #ddd;
-    transition: all .15s;
+  .btn {
+    padding: .45rem .9rem; border-radius: 8px; font-size: .85rem; cursor: pointer;
+    border: 1px solid var(--border); background: var(--bg-surface);
+    font-weight: 550; transition: background .15s;
   }
-  .controls select { background: #fafafa; }
-  .controls select:focus { outline: none; border-color: #4e9af1; }
-
-  .btn-load {
-    background: #eaf4ff;
-    color: #1a6fc4;
-    border-color: #b3d4f5 !important;
-    font-weight: 500;
+  .btn:hover:not(:disabled) { background: var(--bg-inset); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-danger { color: var(--danger); }
+  .btn-danger:hover:not(:disabled) { background: var(--danger-tint); }
+  .btn-primary {
+    background: var(--accent); border-color: var(--accent);
+    color: var(--on-accent); font-weight: 650; padding: .45rem 1.3rem;
   }
-  .btn-load:hover { background: #d1e9ff; }
-
-  .btn-solve {
-    background: #1a6fc4;
-    color: #fff;
-    border-color: #1a6fc4 !important;
-    font-weight: 600;
-    padding: .5rem 1.4rem !important;
-  }
-  .btn-solve:hover { background: #1558a0; }
-  .btn-solve:disabled { background: #9ec4e8; cursor: not-allowed; }
-
-  .btn-clear {
-    background: #fff5f5;
-    color: #c0392b;
-    border-color: #f5c6c6 !important;
-  }
-  .btn-clear:hover { background: #ffe8e8; }
+  .btn-primary:hover:not(:disabled) { background: var(--accent-strong); border-color: var(--accent-strong); }
 
   /* ── Grid de entrada ──────────────────────────────────── */
+  .grid-wrap { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: flex-start; }
   .sudoku-grid {
     display: inline-grid;
-    grid-template-columns: repeat(9, 44px);
-    grid-template-rows: repeat(9, 44px);
+    grid-template-columns: repeat(9, var(--cell));
+    grid-template-rows: repeat(9, var(--cell));
     gap: 1px;
-    background: #999;
-    border: 2px solid #333;
-    border-radius: 4px;
+    background: var(--baseline);
+    border: 2px solid var(--ink-secondary);
+    border-radius: 6px;
     overflow: hidden;
   }
   .sudoku-grid input {
-    width: 44px; height: 44px;
+    width: var(--cell); height: var(--cell);
     border: none;
     text-align: center;
-    font-size: 1.1rem;
-    font-weight: 600;
-    background: #fff;
-    color: #1a1a2e;
+    font-size: 1.05rem; font-weight: 600;
+    background: var(--bg-surface);
+    color: var(--accent);
     outline: none;
-    cursor: text;
-    caret-color: #4e9af1;
+    caret-color: var(--accent);
     transition: background .1s;
   }
-  .sudoku-grid input:focus { background: #eaf4ff; }
-  .sudoku-grid input.given { color: #1a1a2e; background: #f7f7f7; }
-  /* Bordes de cajas 3×3 */
-  .sudoku-grid input:nth-child(3n+4):not(:nth-child(10n)) { border-left: 2px solid #333; }
-  /* filas: después de 18 y 45 inputs, insertar borde inferior grueso */
+  .sudoku-grid input:focus { background: var(--prolog-tint); }
+  .sudoku-grid input.given { color: var(--ink-primary); background: var(--bg-inset); }
+  .sudoku-grid input.conflict { background: var(--danger-tint); color: var(--danger); }
+  /* Separadores 3×3 */
+  .sudoku-grid input:nth-child(9n+4), .sudoku-grid input:nth-child(9n+7) {
+    border-left: 2px solid var(--ink-secondary);
+  }
   .sudoku-grid input:nth-child(n+19):nth-child(-n+27),
   .sudoku-grid input:nth-child(n+46):nth-child(-n+54) {
-    border-bottom: 2px solid #333;
+    border-bottom: 2px solid var(--ink-secondary);
   }
+  @media (max-width: 520px) { :root { --cell: 34px; } .sudoku-grid input { font-size: .9rem; } }
 
-  /* ── Error banner ─────────────────────────────────────── */
+  .grid-side { flex: 1; min-width: 200px; font-size: .82rem; color: var(--ink-secondary); }
+  .grid-side .clue-count { font-weight: 650; color: var(--ink-primary); font-size: .9rem; }
+  .grid-side .hint { margin-top: .5rem; color: var(--ink-muted); line-height: 1.45; }
+  .grid-side .warn { margin-top: .5rem; color: var(--danger); }
+
   .error-banner {
     display: none;
-    background: #ffe8e8;
-    color: #c0392b;
-    border: 1px solid #f5c6c6;
+    background: var(--danger-tint);
+    color: var(--danger);
+    border: 1px solid var(--danger);
     border-radius: 8px;
-    padding: .75rem 1rem;
-    margin-top: 1rem;
-    font-size: .9rem;
+    padding: .7rem 1rem;
+    margin-top: 1.1rem;
+    font-size: .87rem;
   }
 
-  /* ── Spinner ──────────────────────────────────────────── */
-  .spinner-wrap {
-    display: none;
-    align-items: center;
-    gap: .75rem;
-    margin: 1.5rem 0;
-    color: #555;
-    font-size: .9rem;
+  /* ── Progreso ─────────────────────────────────────────── */
+  .progress-wrap { display: none; margin: 0 0 1.5rem; }
+  .progress-label {
+    display: flex; align-items: center; gap: .6rem;
+    font-size: .85rem; color: var(--ink-secondary); margin-bottom: .45rem;
   }
   .spinner {
-    width: 24px; height: 24px;
-    border: 3px solid #ddd;
-    border-top-color: #1a6fc4;
+    width: 16px; height: 16px; flex: none;
+    border: 2.5px solid var(--gridline);
+    border-top-color: var(--accent);
     border-radius: 50%;
     animation: spin .7s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+  .progress-track {
+    height: 6px; border-radius: 3px; background: var(--bg-inset); overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; width: 0; border-radius: 3px;
+    background: var(--accent);
+    transition: width .3s ease;
+  }
 
-  /* ── Sección de resultados ────────────────────────────── */
+  /* ── Resultados: cards ────────────────────────────────── */
   #results-section { display: none; }
-
   .results-grids {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
-  @media (max-width: 760px) {
-    .results-grids { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 480px) {
-    .results-grids { grid-template-columns: 1fr; }
-  }
-
   .solver-card {
-    background: #fff;
-    border-radius: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
     padding: 1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    box-shadow: var(--shadow);
+    transition: border-color .2s;
   }
+  .solver-card.running { border-color: var(--accent); }
   .solver-card h3 {
-    font-size: .8rem;
-    font-weight: 700;
-    margin-bottom: .6rem;
-    display: flex;
-    align-items: center;
-    gap: .4rem;
+    font-size: .8rem; font-weight: 700; margin-bottom: .55rem;
+    display: flex; align-items: center; gap: .4rem; flex-wrap: wrap;
   }
-  .badge-prolog {
-    background: #dbeafe; color: #1a6fc4;
-    padding: 2px 6px; border-radius: 4px; font-size: .7rem;
+  .badge { padding: 2px 7px; border-radius: 5px; font-size: .68rem; font-weight: 700; }
+  .badge-prolog  { background: var(--prolog-tint);  color: var(--prolog); }
+  .badge-haskell { background: var(--haskell-tint); color: var(--haskell); }
+  :root:not([data-theme="dark"]) .badge-haskell { color: #a06d00; } /* legibilidad sobre tinte claro */
+  .chip-fastest {
+    margin-left: auto; font-size: .66rem; font-weight: 700;
+    color: var(--success); border: 1px solid var(--success);
+    border-radius: 999px; padding: 1px 7px;
   }
-  .badge-haskell {
-    background: #fef3c7; color: #b45309;
-    padding: 2px 6px; border-radius: 4px; font-size: .7rem;
+  .solver-time { font-size: .78rem; color: var(--ink-secondary); margin-bottom: .55rem; font-variant-numeric: tabular-nums; }
+  .solver-status {
+    display: flex; align-items: center; gap: .45rem;
+    font-size: .8rem; color: var(--ink-muted); padding: .4rem 0;
   }
-  .solver-time {
-    font-size: .75rem; color: #666;
-    margin-bottom: .5rem;
-  }
+  .solver-status.error { color: var(--danger); }
+  .solver-status .spinner { width: 13px; height: 13px; border-width: 2px; }
 
-  /* ── Mini grid de resultado ───────────────────────────── */
   .mini-grid {
     display: inline-grid;
     grid-template-columns: repeat(9, 22px);
     grid-template-rows: repeat(9, 22px);
     gap: 1px;
-    background: #bbb;
-    border: 1.5px solid #555;
-    border-radius: 3px;
+    background: var(--baseline);
+    border: 1.5px solid var(--ink-muted);
+    border-radius: 4px;
     overflow: hidden;
   }
   .mini-grid span {
     width: 22px; height: 22px;
     display: flex; align-items: center; justify-content: center;
-    font-size: .7rem; font-weight: 600;
+    font-size: .68rem; font-weight: 600;
+    background: var(--bg-surface);
   }
-  .mini-grid span.cell-given   { background: #f7f7f7; color: #1a1a2e; }
-  .mini-grid span.cell-solved-prolog  { background: #dbeafe; color: #1a6fc4; }
-  .mini-grid span.cell-solved-haskell { background: #fef3c7; color: #b45309; }
-  /* Bordes 3×3 en mini grid */
-  .mini-grid span:nth-child(3n+4) { border-left: 1.5px solid #555; }
+  .mini-grid span.cell-given { background: var(--bg-inset); color: var(--ink-primary); }
+  .mini-grid span.cell-solved-prolog  { background: var(--prolog-tint);  color: var(--prolog); }
+  .mini-grid span.cell-solved-haskell { background: var(--haskell-tint); color: var(--haskell); }
+  :root:not([data-theme="dark"]) .mini-grid span.cell-solved-haskell { color: #a06d00; }
+  .mini-grid span:nth-child(9n+4), .mini-grid span:nth-child(9n+7) {
+    border-left: 1.5px solid var(--ink-muted);
+  }
   .mini-grid span:nth-child(n+19):nth-child(-n+27),
   .mini-grid span:nth-child(n+46):nth-child(-n+54) {
-    border-bottom: 1.5px solid #555;
+    border-bottom: 1.5px solid var(--ink-muted);
   }
 
-  .solver-error {
-    color: #c0392b; font-size: .8rem; padding: .5rem 0;
-    display: flex; align-items: center; gap: .3rem;
-  }
-
-  /* ── Charts & stats ───────────────────────────────────── */
-  .chart-section, .stats-section {
-    background: #fff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,.07);
-    margin-bottom: 1.5rem;
-  }
-  .chart-section h2, .stats-section h2 {
-    font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #444;
-  }
+  /* ── Chart ────────────────────────────────────────────── */
+  .chart-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: .9rem; }
+  .chart-head h2 { font-size: .95rem; font-weight: 650; }
+  .legend { display: flex; gap: 1rem; font-size: .76rem; color: var(--ink-secondary); align-items: center; }
+  .legend .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: .35rem; vertical-align: -1px; }
   #bar-chart { overflow-x: auto; }
-  #bar-chart svg { max-width: 100%; }
+  #bar-chart svg { max-width: 100%; height: auto; }
+  #bar-chart .bar:hover { opacity: .8; }
+  .chart-empty { color: var(--ink-muted); font-size: .85rem; }
 
-  .stats-section table {
-    width: 100%; border-collapse: collapse; font-size: .85rem;
-  }
+  /* ── Stats ────────────────────────────────────────────── */
+  .stats-section table { width: 100%; border-collapse: collapse; font-size: .85rem; }
   .stats-section th {
-    background: #f0f2f5; padding: .5rem .75rem;
-    text-align: left; font-weight: 600; color: #555;
-    border-bottom: 2px solid #ddd;
+    background: var(--bg-inset); padding: .5rem .75rem;
+    text-align: left; font-weight: 650; color: var(--ink-secondary);
+    border-bottom: 2px solid var(--gridline);
   }
   .stats-section td {
     padding: .5rem .75rem;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--gridline);
+    font-variant-numeric: tabular-nums;
   }
   .stats-section tr:last-child td { border-bottom: none; }
-  .stats-section tr:hover td { background: #fafafa; }
-  .rank-1 td:first-child { font-weight: 700; }
+  .stats-section tr.rank-1 td { background: var(--prolog-tint); font-weight: 650; }
+
+  .footer {
+    text-align: center; font-size: .72rem; color: var(--ink-muted);
+    padding: 0 1rem 2rem;
+  }
 </style>
 </head>
 <body>
 
 <header class="header">
-  <h1>Sudoku Comparative Study</h1>
-  <p>Prolog (Naive BT · MRV · CLP(FD)) &nbsp;vs&nbsp; Haskell (FirstEmpty · MRV · PropMRV)</p>
+  <div class="header-titles">
+    <h1>Sudoku Comparative Study</h1>
+    <p>Prolog (Naive BT · MRV · CLP(FD)) &nbsp;vs&nbsp; Haskell (FirstEmpty · MRV · PropMRV)</p>
+  </div>
+  <div class="header-tools">
+    <span id="backend-status" class="backend-status"><span class="dot"></span><span id="backend-status-text"></span></span>
+    <div class="seg" role="group" aria-label="Idioma / Language">
+      <button id="loc-es" onclick="setLocale('es')">ES</button>
+      <button id="loc-en" onclick="setLocale('en')">EN</button>
+    </div>
+    <button id="btn-theme" class="btn-theme" onclick="toggleTheme()" aria-label="Cambiar tema">🌙</button>
+  </div>
 </header>
 
 <main class="main">
 
   <!-- Panel de entrada -->
-  <div class="input-panel">
-    <h2>Ingresar puzzle</h2>
+  <div class="panel">
+    <h2 data-i18n="inputTitle"></h2>
     <div class="controls">
-      <select id="difficulty">
-        <option value="easy">Fácil</option>
-        <option value="medium">Medio</option>
-        <option value="hard">Difícil</option>
+      <select id="difficulty" aria-label="Dificultad">
+        <option value="easy"   data-i18n="diffEasy"></option>
+        <option value="medium" data-i18n="diffMedium"></option>
+        <option value="hard"   data-i18n="diffHard"></option>
       </select>
-      <button class="btn-load" onclick="loadRandomPuzzle()">Cargar puzzle aleatorio</button>
-      <button class="btn-clear" onclick="clearGrid()">Limpiar</button>
-      <button class="btn-solve" id="btn-solve" onclick="solveAll()">Resolver con los 6 solvers</button>
+      <button class="btn" id="btn-load" onclick="loadRandomPuzzle()" data-i18n="loadRandom"></button>
+      <button class="btn btn-danger" id="btn-clear" onclick="clearGrid()" data-i18n="clear"></button>
+      <button class="btn btn-primary" id="btn-solve" onclick="solveAll()" data-i18n="solve"></button>
     </div>
 
-    <div id="grid-input" class="sudoku-grid"></div>
-    <div id="error-banner" class="error-banner"></div>
+    <div class="grid-wrap">
+      <div id="grid-input" class="sudoku-grid"></div>
+      <div class="grid-side">
+        <div class="clue-count" id="clue-count"></div>
+        <div class="warn" id="board-warn" hidden></div>
+        <div class="hint" data-i18n="pasteHint"></div>
+      </div>
+    </div>
+    <div id="error-banner" class="error-banner" role="alert"></div>
   </div>
 
-  <!-- Spinner -->
-  <div id="spinner-wrap" class="spinner-wrap">
-    <div class="spinner"></div>
-    <span id="spinner-msg">Ejecutando los 6 solvers… puede tardar hasta 30s por solver difícil.</span>
+  <!-- Progreso -->
+  <div id="progress-wrap" class="progress-wrap" role="status">
+    <div class="progress-label">
+      <div class="spinner"></div>
+      <span id="progress-msg"></span>
+    </div>
+    <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
   </div>
 
   <!-- Resultados -->
   <div id="results-section">
-
     <div class="results-grids" id="results-grids"></div>
 
-    <div class="chart-section">
-      <h2>Comparación de tiempos</h2>
+    <div class="panel">
+      <div class="chart-head">
+        <h2 data-i18n="chartTitle"></h2>
+        <div class="legend">
+          <span><span class="swatch" style="background:var(--prolog)"></span>Prolog</span>
+          <span><span class="swatch" style="background:var(--haskell)"></span>Haskell</span>
+          <div class="seg" role="group" aria-label="Escala">
+            <button id="scale-log"    onclick="setScale('log')"    data-i18n="scaleLog"></button>
+            <button id="scale-linear" onclick="setScale('linear')" data-i18n="scaleLinear"></button>
+          </div>
+        </div>
+      </div>
       <div id="bar-chart"></div>
     </div>
 
-    <div class="stats-section">
-      <h2>Estadísticas</h2>
+    <div class="panel stats-section">
+      <h2 data-i18n="statsTitle"></h2>
       <div id="stats-table"></div>
     </div>
-
   </div>
 
 </main>
+
+<footer class="footer">UNNOBA · Programación Lógica y Funcional · 2026</footer>
 
 <script>
 // ── Configuración ────────────────────────────────────────────────────────────
@@ -307,13 +416,138 @@ const API = 'http://localhost:5000';
 const SOLVER_META = [
   { id: 'prolog_naive',  label: 'Prolog Naive BT', lang: 'prolog'  },
   { id: 'prolog_mrv',    label: 'Prolog MRV',      lang: 'prolog'  },
-  { id: 'prolog_clp',    label: 'Prolog CLP(FD)',   lang: 'prolog'  },
-  { id: 'haskell_fe',    label: 'Haskell FE',       lang: 'haskell' },
-  { id: 'haskell_mrv',   label: 'Haskell MRV',      lang: 'haskell' },
-  { id: 'haskell_pmrv',  label: 'Haskell PropMRV',  lang: 'haskell' },
+  { id: 'prolog_clp',    label: 'Prolog CLP(FD)',  lang: 'prolog'  },
+  { id: 'haskell_fe',    label: 'Haskell FE',      lang: 'haskell' },
+  { id: 'haskell_mrv',   label: 'Haskell MRV',     lang: 'haskell' },
+  { id: 'haskell_pmrv',  label: 'Haskell PropMRV', lang: 'haskell' },
 ];
 
-// ── Construcción del grid de entrada ─────────────────────────────────────────
+const MIN_CLUES = 17;   // mínimo teórico para solución única
+
+// ── i18n ─────────────────────────────────────────────────────────────────────
+const I18N = {
+  es: {
+    inputTitle: 'Ingresar puzzle',
+    diffEasy: 'Fácil', diffMedium: 'Medio', diffHard: 'Difícil',
+    loadRandom: 'Cargar aleatorio', clear: 'Limpiar', solve: 'Resolver con los 6 solvers',
+    clues: '{n} pistas',
+    minClues: 'Se necesitan al menos {n} pistas para una solución única.',
+    conflicts: 'Hay valores repetidos en una fila, columna o caja.',
+    pasteHint: 'Tip: pegá una cadena de 81 caracteres (dígitos y 0 o .) sobre el tablero para cargar un puzzle.',
+    emptyBoard: 'El tablero está vacío. Ingresá un puzzle o cargá uno aleatorio.',
+    backendDown: 'No se pudo conectar al backend ({msg}). ¿Está corriendo python backend/app.py?',
+    backendOk: 'Backend conectado', backendOff: 'Backend no disponible', backendChecking: 'Verificando backend…',
+    noPuzzles: 'No se encontraron puzzles para esa dificultad.',
+    solving: 'Resolviendo {done}/{total} — {solver}',
+    queued: 'En cola', running: 'Ejecutando…', skipped: 'No ejecutado',
+    timeout: 'Timeout (>30s)', noSolution: 'Sin solución',
+    noSolutionAll: 'Este puzzle no tiene solución válida. Probá con otro.',
+    solUnavailable: 'Solución no disponible (recompilá con stack build)',
+    unknownError: 'Error desconocido',
+    chartTitle: 'Comparación de tiempos', statsTitle: 'Estadísticas',
+    scaleLog: 'Escala log', scaleLinear: 'Lineal',
+    fastest: 'más rápido',
+    rank: '#', solverCol: 'Solver', timeCol: 'Tiempo (ms)', speedupCol: 'Speedup vs más lento',
+    noneSucceeded: 'Ningún solver completó con éxito.',
+    failedBar: 'FALLÓ / TIMEOUT',
+    themeToggle: 'Cambiar tema',
+  },
+  en: {
+    inputTitle: 'Enter puzzle',
+    diffEasy: 'Easy', diffMedium: 'Medium', diffHard: 'Hard',
+    loadRandom: 'Load random', clear: 'Clear', solve: 'Solve with all 6 solvers',
+    clues: '{n} clues',
+    minClues: 'At least {n} clues are needed for a unique solution.',
+    conflicts: 'There are repeated values in a row, column or box.',
+    pasteHint: 'Tip: paste an 81-character string (digits with 0 or .) onto the board to load a puzzle.',
+    emptyBoard: 'The board is empty. Enter a puzzle or load a random one.',
+    backendDown: 'Could not reach the backend ({msg}). Is python backend/app.py running?',
+    backendOk: 'Backend connected', backendOff: 'Backend unavailable', backendChecking: 'Checking backend…',
+    noPuzzles: 'No puzzles found for that difficulty.',
+    solving: 'Solving {done}/{total} — {solver}',
+    queued: 'Queued', running: 'Running…', skipped: 'Not run',
+    timeout: 'Timeout (>30s)', noSolution: 'No solution',
+    noSolutionAll: 'This puzzle has no valid solution. Try another one.',
+    solUnavailable: 'Solution unavailable (rebuild with stack build)',
+    unknownError: 'Unknown error',
+    chartTitle: 'Time comparison', statsTitle: 'Statistics',
+    scaleLog: 'Log scale', scaleLinear: 'Linear',
+    fastest: 'fastest',
+    rank: '#', solverCol: 'Solver', timeCol: 'Time (ms)', speedupCol: 'Speedup vs slowest',
+    noneSucceeded: 'No solver completed successfully.',
+    failedBar: 'FAILED / TIMEOUT',
+    themeToggle: 'Toggle theme',
+  },
+};
+
+const state = {
+  locale: localStorage.getItem('sudoku-locale') || 'es',
+  theme:  localStorage.getItem('sudoku-theme')
+          || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
+  scale: 'log',
+  original: '',
+  results: {},          // id → { status: queued|running|done|skipped, result }
+  runId: 0,
+  running: false,
+  backend: 'checking',  // checking | ok | down
+};
+
+function t(key, vars) {
+  const str = I18N[state.locale][key] ?? I18N.es[key] ?? key;
+  return str.replace(/\{(\w+)\}/g, (m, k) => (vars && k in vars) ? vars[k] : m);
+}
+
+function applyI18n() {
+  document.documentElement.lang = state.locale;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.getElementById('loc-es').classList.toggle('active', state.locale === 'es');
+  document.getElementById('loc-en').classList.toggle('active', state.locale === 'en');
+  document.getElementById('btn-theme').setAttribute('aria-label', t('themeToggle'));
+  renderBackendStatus();
+  updateBoardState();
+  if (hasAnyResult()) renderResultsUI();
+}
+
+function setLocale(loc) {
+  state.locale = loc;
+  localStorage.setItem('sudoku-locale', loc);
+  applyI18n();
+}
+
+// ── Tema ─────────────────────────────────────────────────────────────────────
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', state.theme);
+  document.getElementById('btn-theme').textContent = state.theme === 'dark' ? '☀️' : '🌙';
+}
+function toggleTheme() {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('sudoku-theme', state.theme);
+  applyTheme();
+}
+
+// ── Estado del backend ───────────────────────────────────────────────────────
+async function checkBackend() {
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 4000);
+    const res = await fetch(`${API}/api/health`, { signal: ctrl.signal });
+    clearTimeout(timer);
+    state.backend = res.ok ? 'ok' : 'down';
+  } catch {
+    state.backend = 'down';
+  }
+  renderBackendStatus();
+}
+function renderBackendStatus() {
+  const wrap = document.getElementById('backend-status');
+  wrap.className = 'backend-status' + (state.backend === 'ok' ? ' ok' : state.backend === 'down' ? ' down' : '');
+  document.getElementById('backend-status-text').textContent =
+    state.backend === 'ok' ? t('backendOk') : state.backend === 'down' ? t('backendOff') : t('backendChecking');
+}
+
+// ── Grid de entrada ──────────────────────────────────────────────────────────
 const gridEl = document.getElementById('grid-input');
 
 function buildInputGrid() {
@@ -321,55 +555,137 @@ function buildInputGrid() {
   for (let i = 0; i < 81; i++) {
     const inp = document.createElement('input');
     inp.type = 'text';
+    inp.inputMode = 'numeric';
     inp.maxLength = 1;
+    inp.autocomplete = 'off';
     inp.dataset.index = i;
     inp.addEventListener('keydown', onCellKeydown);
-    inp.addEventListener('input',   onCellInput);
+    inp.addEventListener('input', onCellInput);
+    inp.addEventListener('focus', e => e.target.select());
     gridEl.appendChild(inp);
   }
+  gridEl.addEventListener('paste', onGridPaste);
+}
+
+const cells = () => gridEl.querySelectorAll('input');
+
+function focusCell(idx) {
+  if (idx < 0 || idx > 80) return;
+  cells()[idx].focus();
 }
 
 function onCellKeydown(e) {
-  const allowed = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
+  const i = +e.target.dataset.index;
+  const nav = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -9, ArrowDown: 9 };
+  if (e.key in nav) { e.preventDefault(); focusCell(i + nav[e.key]); return; }
+  if (e.key === 'Backspace' && !e.target.value && !e.target.readOnly) {
+    e.preventDefault(); focusCell(i - 1); return;
+  }
+  const allowed = ['Backspace', 'Delete', 'Tab'];
   if (allowed.includes(e.key)) return;
   if (e.key >= '1' && e.key <= '9') return;
+  if (e.ctrlKey || e.metaKey) return;   // permitir pegar / atajos
   e.preventDefault();
 }
 
 function onCellInput(e) {
   const v = e.target.value;
-  if (!/^[1-9]$/.test(v)) e.target.value = '';
+  if (!/^[1-9]$/.test(v)) {
+    e.target.value = '';
+  } else {
+    // auto-avance al próximo casillero editable
+    let next = +e.target.dataset.index + 1;
+    while (next <= 80 && cells()[next].readOnly) next++;
+    focusCell(next);
+  }
+  updateBoardState();
+}
+
+function onGridPaste(e) {
+  const text = (e.clipboardData || window.clipboardData).getData('text') || '';
+  const chars = text.replace(/\s+/g, '').replace(/\./g, '0');
+  if (/^[0-9]{81}$/.test(chars)) {
+    e.preventDefault();
+    fillGrid(chars, { lock: false });
+  }
 }
 
 function readGrid() {
-  return Array.from(gridEl.querySelectorAll('input'))
-    .map(i => i.value || '0')
-    .join('');
+  return Array.from(cells()).map(i => i.value || '0').join('');
 }
 
-function fillGrid(puzzle) {
-  const inputs = gridEl.querySelectorAll('input');
+function fillGrid(puzzle, { lock } = { lock: true }) {
+  const inputs = cells();
   for (let i = 0; i < 81; i++) {
     const v = puzzle[i];
-    inputs[i].value = (v && v !== '0') ? v : '';
-    inputs[i].classList.toggle('given', v && v !== '0');
-    inputs[i].readOnly = (v && v !== '0');
+    const has = v && v !== '0';
+    inputs[i].value = has ? v : '';
+    inputs[i].classList.toggle('given', lock && has);
+    inputs[i].readOnly = lock && has;
   }
   hideError();
+  hideResults();
+  updateBoardState();
 }
 
 function clearGrid() {
-  const inputs = gridEl.querySelectorAll('input');
-  inputs.forEach(inp => {
+  cells().forEach(inp => {
     inp.value = '';
-    inp.classList.remove('given');
+    inp.classList.remove('given', 'conflict');
     inp.readOnly = false;
   });
-  document.getElementById('results-section').style.display = 'none';
   hideError();
+  hideResults();
+  updateBoardState();
 }
 
-// ── Cargar puzzle aleatorio ───────────────────────────────────────────────────
+// ── Validación del tablero (pistas + conflictos) ─────────────────────────────
+function computeConflicts(values) {
+  const conflicts = new Set();
+  const units = [];
+  for (let r = 0; r < 9; r++) units.push([...Array(9)].map((_, c) => r * 9 + c));
+  for (let c = 0; c < 9; c++) units.push([...Array(9)].map((_, r) => r * 9 + c));
+  for (let br = 0; br < 3; br++) for (let bc = 0; bc < 3; bc++) {
+    const box = [];
+    for (let dr = 0; dr < 3; dr++) for (let dc = 0; dc < 3; dc++)
+      box.push((br * 3 + dr) * 9 + (bc * 3 + dc));
+    units.push(box);
+  }
+  for (const unit of units) {
+    const seen = {};
+    for (const idx of unit) {
+      const v = values[idx];
+      if (v === '0') continue;
+      if (seen[v] !== undefined) { conflicts.add(idx); conflicts.add(seen[v]); }
+      else seen[v] = idx;
+    }
+  }
+  return conflicts;
+}
+
+function updateBoardState() {
+  const values = readGrid();
+  const clueCount = 81 - (values.match(/0/g) || []).length;
+  const conflicts = computeConflicts(values);
+
+  cells().forEach((inp, i) => inp.classList.toggle('conflict', conflicts.has(i)));
+
+  document.getElementById('clue-count').textContent = t('clues', { n: clueCount });
+
+  const warn = document.getElementById('board-warn');
+  if (conflicts.size > 0) {
+    warn.hidden = false; warn.textContent = t('conflicts');
+  } else if (clueCount > 0 && clueCount < MIN_CLUES) {
+    warn.hidden = false; warn.textContent = t('minClues', { n: MIN_CLUES });
+  } else {
+    warn.hidden = true;
+  }
+
+  document.getElementById('btn-solve').disabled =
+    state.running || clueCount < MIN_CLUES || conflicts.size > 0;
+}
+
+// ── Cargar puzzle aleatorio ──────────────────────────────────────────────────
 async function loadRandomPuzzle() {
   const difficulty = document.getElementById('difficulty').value;
   try {
@@ -377,199 +693,347 @@ async function loadRandomPuzzle() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     if (!data.puzzles || data.puzzles.length === 0) {
-      showError('No se encontraron puzzles para esa dificultad.');
+      showError(t('noPuzzles'));
       return;
     }
     const puzzle = data.puzzles[Math.floor(Math.random() * data.puzzles.length)];
-    fillGrid(puzzle);
-    document.getElementById('results-section').style.display = 'none';
+    fillGrid(puzzle, { lock: true });
   } catch (err) {
-    showError('No se pudo conectar al backend: ' + err.message);
+    state.backend = 'down'; renderBackendStatus();
+    showError(t('backendDown', { msg: err.message }));
   }
 }
 
-// ── Resolver ──────────────────────────────────────────────────────────────────
+// ── Resolver (secuencial, resultados en vivo) ────────────────────────────────
+// Los solvers se ejecutan de a uno para no competir por CPU entre sí:
+// correrlos en paralelo distorsionaría los tiempos que se comparan.
 async function solveAll() {
   const puzzle = readGrid();
-  const clues = puzzle.replace(/0/g, '').length;
-
-  if (clues === 0) {
-    showError('El tablero está vacío. Ingresá un puzzle o cargá uno aleatorio.');
-    return;
-  }
+  if (puzzle.replace(/0/g, '').length === 0) { showError(t('emptyBoard')); return; }
 
   hideError();
-  showSpinner(true);
-  document.getElementById('btn-solve').disabled = true;
-  document.getElementById('results-section').style.display = 'none';
+  state.running = true;
+  state.runId++;
+  const runId = state.runId;
+  state.original = puzzle;
+  state.results = {};
+  for (const m of SOLVER_META) state.results[m.id] = { status: 'queued', result: null };
 
-  try {
-    const res = await fetch(`${API}/api/solve`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ puzzle }),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || `HTTP ${res.status}`);
-    }
-    const data = await res.json();
-    console.log('[DEBUG] Respuesta del backend:', JSON.stringify(data, null, 2));
-    renderResults(data);
-  } catch (err) {
-    showError('Error: ' + err.message);
-  } finally {
-    showSpinner(false);
-    document.getElementById('btn-solve').disabled = false;
-  }
-}
-
-// ── Render resultados ─────────────────────────────────────────────────────────
-function renderResults(data) {
-  const original = data.puzzle;
-  const results  = data.results;
-
-  // Detectar si todos los solvers dicen "sin solución"
-  const allNoSolution = Object.values(results).every(r => r?.no_solution === true);
-  if (allNoSolution) {
-    showError('Este puzzle no tiene solución válida. Probá con otro puzzle.');
-    document.getElementById('results-section').style.display = 'none';
-    return;
-  }
-
-  renderGrids(original, results);
-  renderBarChart(results);
-  renderStatsTable(results);
-
+  setControlsEnabled(false);
   document.getElementById('results-section').style.display = 'block';
-  document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderResultsUI();
+  showProgress(0, SOLVER_META[0].label);
+
+  let aborted = false;
+  for (let i = 0; i < SOLVER_META.length; i++) {
+    const meta = SOLVER_META[i];
+    state.results[meta.id].status = 'running';
+    renderResultsUI();
+    showProgress(i, meta.label);
+
+    try {
+      const res = await fetch(`${API}/api/solve_one`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ puzzle, solver: meta.id }),
+      });
+      if (state.runId !== runId) return;   // corrida cancelada por Limpiar
+
+      if (res.status === 400) {
+        const err = await res.json().catch(() => ({}));
+        showError(err.error || `HTTP ${res.status}`);
+        aborted = true;
+        break;
+      }
+      if (!res.ok) {
+        state.results[meta.id] = { status: 'done', result: { success: false, error: `HTTP ${res.status}` } };
+      } else {
+        const data = await res.json();
+        state.results[meta.id] = { status: 'done', result: data.result };
+      }
+    } catch (err) {
+      if (state.runId !== runId) return;
+      state.backend = 'down'; renderBackendStatus();
+      showError(t('backendDown', { msg: err.message }));
+      aborted = true;
+      break;
+    }
+    renderResultsUI();
+  }
+
+  if (state.runId !== runId) return;
+  if (aborted) {
+    for (const m of SOLVER_META) {
+      if (state.results[m.id].status !== 'done') state.results[m.id].status = 'skipped';
+    }
+  }
+  state.running = false;
+  hideProgress();
+  setControlsEnabled(true);
+  renderResultsUI();
+
+  const done = Object.values(state.results).filter(r => r.status === 'done');
+  if (done.length > 0 && done.every(r => r.result?.no_solution === true)) {
+    showError(t('noSolutionAll'));
+  }
 }
 
-function renderGrids(original, results) {
+function setControlsEnabled(enabled) {
+  document.getElementById('btn-load').disabled = !enabled;
+  document.getElementById('btn-clear').disabled = !enabled;
+  updateBoardState();
+}
+
+// ── Render de resultados ─────────────────────────────────────────────────────
+function hasAnyResult() { return Object.keys(state.results).length > 0; }
+
+function hideResults() {
+  state.results = {};
+  document.getElementById('results-section').style.display = 'none';
+}
+
+function renderResultsUI() {
+  renderGrids();
+  renderBarChart();
+  renderStatsTable();
+}
+
+function renderGrids() {
   const container = document.getElementById('results-grids');
   container.innerHTML = '';
 
+  const times = successEntries().map(e => e.time);
+  const fastest = times.length ? Math.min(...times) : null;
+
   for (const meta of SOLVER_META) {
-    const r = results[meta.id];
+    const entry = state.results[meta.id];
+    if (!entry) continue;
     const card = document.createElement('div');
-    card.className = 'solver-card';
+    card.className = 'solver-card' + (entry.status === 'running' ? ' running' : '');
 
-    const badge = `<span class="badge-${meta.lang}">${meta.lang === 'prolog' ? 'Prolog' : 'Haskell'}</span>`;
-    card.innerHTML = `<h3>${badge} ${meta.label}</h3>`;
+    const badge = `<span class="badge badge-${meta.lang}">${meta.lang === 'prolog' ? 'Prolog' : 'Haskell'}</span>`;
+    const r = entry.result;
+    const isFastest = r?.success && r.time_ms != null && r.time_ms === fastest && times.length > 1;
+    const chip = isFastest ? `<span class="chip-fastest">★ ${t('fastest')}</span>` : '';
+    card.innerHTML = `<h3>${badge} ${meta.label}${chip}</h3>`;
 
-    if (!r || !r.success) {
+    if (entry.status === 'queued') {
+      card.innerHTML += `<div class="solver-status">⏳ ${t('queued')}</div>`;
+    } else if (entry.status === 'running') {
+      card.innerHTML += `<div class="solver-status"><span class="spinner"></span> ${t('running')}</div>`;
+    } else if (entry.status === 'skipped') {
+      card.innerHTML += `<div class="solver-status">— ${t('skipped')}</div>`;
+    } else if (!r || !r.success) {
       if (r?.no_solution) {
-        const timeStr = r.time_ms != null ? r.time_ms.toFixed(3) + ' ms' : '—';
-        card.innerHTML += `<div class="solver-time">⏱ ${timeStr}</div>`;
-        card.innerHTML += `<div class="solver-error">✗ Sin solución</div>`;
+        card.innerHTML += timeHtml(r) + `<div class="solver-status error">✗ ${t('noSolution')}</div>`;
       } else if (r?.timeout) {
-        card.innerHTML += `<div class="solver-error">⏱ Timeout (&gt;30s)</div>`;
+        card.innerHTML += `<div class="solver-status error">⏱ ${t('timeout')}</div>`;
       } else {
-        card.innerHTML += `<div class="solver-error">✗ ${r?.error || 'Error desconocido'}</div>`;
+        card.innerHTML += `<div class="solver-status error">✗ ${escapeHtml(r?.error || t('unknownError'))}</div>`;
       }
     } else if (!r.solution) {
-      const timeStr = r.time_ms != null ? r.time_ms.toFixed(3) + ' ms' : '—';
-      card.innerHTML += `<div class="solver-time">⏱ ${timeStr}</div>`;
-      card.innerHTML += `<div class="solver-error">⚠ Solución no disponible (reconstruí con stack build)</div>`;
+      card.innerHTML += timeHtml(r) + `<div class="solver-status error">⚠ ${t('solUnavailable')}</div>`;
     } else {
-      const timeStr = r.time_ms != null ? r.time_ms.toFixed(3) + ' ms' : '—';
-      card.innerHTML += `<div class="solver-time">⏱ ${timeStr}</div>`;
-      card.appendChild(buildMiniGrid(original, r.solution, meta.lang));
+      card.innerHTML += timeHtml(r);
+      card.appendChild(buildMiniGrid(state.original, r.solution, meta.lang));
     }
-
     container.appendChild(card);
   }
+}
+
+function timeHtml(r) {
+  const s = r.time_ms != null ? r.time_ms.toFixed(3) + ' ms' : '—';
+  return `<div class="solver-time">⏱ ${s}</div>`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
 function buildMiniGrid(original, solution, lang) {
   const grid = document.createElement('div');
   grid.className = 'mini-grid';
-
   for (let i = 0; i < 81; i++) {
     const span = document.createElement('span');
     const isGiven = original[i] !== '0';
     const val = solution ? solution[i] : original[i];
     span.textContent = (val && val !== '0') ? val : '';
-
-    if (isGiven) {
-      span.className = 'cell-given';
-    } else {
-      span.className = lang === 'prolog' ? 'cell-solved-prolog' : 'cell-solved-haskell';
-    }
-
+    span.className = isGiven ? 'cell-given' : `cell-solved-${lang}`;
     grid.appendChild(span);
   }
   return grid;
 }
 
-function renderBarChart(results) {
+// ── Chart de barras (SVG, escala log/lineal) ─────────────────────────────────
+function successEntries() {
+  return SOLVER_META
+    .map(m => {
+      const r = state.results[m.id]?.result;
+      return { ...m, time: (r?.success && r.time_ms != null) ? Math.max(r.time_ms, 0.001) : null };
+    })
+    .filter(e => e.time !== null);
+}
+
+function setScale(scale) {
+  state.scale = scale;
+  renderBarChart();
+}
+
+function niceLinearTicks(max) {
+  const raw = max / 5;
+  const mag = 10 ** Math.floor(Math.log10(raw));
+  const norm = raw / mag;
+  const step = (norm < 1.5 ? 1 : norm < 3.5 ? 2 : norm < 7.5 ? 5 : 10) * mag;
+  const ticks = [];
+  for (let v = 0; v <= max + step * 0.999; v += step) ticks.push(v);
+  return ticks;
+}
+
+function fmtTick(v) {
+  if (v === 0) return '0';
+  if (v >= 1) return v >= 1000 ? v.toLocaleString('en-US') : String(v);
+  return String(Number(v.toPrecision(1)));
+}
+
+function renderBarChart() {
+  document.getElementById('scale-log').classList.toggle('active', state.scale === 'log');
+  document.getElementById('scale-linear').classList.toggle('active', state.scale === 'linear');
+
+  const chartEl = document.getElementById('bar-chart');
   const entries = SOLVER_META
-    .map(m => ({ ...m, time: results[m.id]?.success ? results[m.id].time_ms : null }));
+    .map(m => {
+      const r = state.results[m.id]?.result;
+      const st = state.results[m.id]?.status;
+      return { ...m, status: st, time: (r?.success && r.time_ms != null) ? Math.max(r.time_ms, 0.001) : null };
+    })
+    .filter(e => e.status);   // solo los de la corrida actual
 
-  const valid   = entries.filter(e => e.time !== null);
-  const maxTime = valid.length ? Math.max(...valid.map(e => e.time)) : 1;
+  const valid = entries.filter(e => e.time !== null);
+  if (entries.length === 0) { chartEl.innerHTML = `<p class="chart-empty">—</p>`; return; }
 
-  const W = 640, PADL = 160, PADR = 100, PADT = 20, BAR_H = 28, GAP = 8;
-  const totalH = PADT + entries.length * (BAR_H + GAP) + 20;
-  const barW   = W - PADL - PADR;
+  const fastest = valid.length ? Math.min(...valid.map(e => e.time)) : null;
+  const isLog = state.scale === 'log';
 
-  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${totalH}" font-family="'Segoe UI',system-ui,sans-serif">`;
+  // Dominio del eje
+  let ticks, domMin, domMax;
+  if (valid.length === 0) {
+    ticks = []; domMin = 0; domMax = 1;
+  } else if (isLog) {
+    const maxT = Math.max(...valid.map(e => e.time));
+    const minT = Math.min(...valid.map(e => e.time));
+    let lo = Math.floor(Math.log10(minT));
+    if (Math.log10(minT) === lo) lo -= 1;          // que la barra mínima tenga largo
+    let hi = Math.ceil(Math.log10(maxT));
+    if (hi <= lo) hi = lo + 1;
+    domMin = lo; domMax = hi;
+    ticks = [];
+    for (let k = lo; k <= hi; k++) ticks.push(10 ** k);
+  } else {
+    const maxT = Math.max(...valid.map(e => e.time));
+    ticks = niceLinearTicks(maxT);
+    domMin = 0; domMax = ticks[ticks.length - 1];
+  }
+
+  const xFrac = tVal => {
+    if (isLog) return (Math.log10(tVal) - domMin) / (domMax - domMin);
+    return tVal / domMax;
+  };
+
+  const W = 680, PADL = 150, PADR = 110, PADT = 8, BAR_H = 20, GAP = 12, PADB = 26;
+  const plotW = W - PADL - PADR;
+  const plotH = entries.length * (BAR_H + GAP) - GAP;
+  const H = PADT + plotH + PADB;
+
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="system-ui,'Segoe UI',sans-serif">`;
+
+  // Gridlines + ticks
+  for (const tick of ticks) {
+    const x = PADL + xFrac(Math.max(tick, isLog ? 10 ** domMin : 0)) * plotW;
+    svg += `<line x1="${x}" y1="${PADT}" x2="${x}" y2="${PADT + plotH}" stroke="var(--gridline)" stroke-width="1"/>`;
+    svg += `<text x="${x}" y="${PADT + plotH + 16}" text-anchor="middle" font-size="10" fill="var(--ink-muted)">${fmtTick(tick)}</text>`;
+  }
+  // Eje base
+  svg += `<line x1="${PADL}" y1="${PADT}" x2="${PADL}" y2="${PADT + plotH}" stroke="var(--baseline)" stroke-width="1"/>`;
 
   entries.forEach((e, i) => {
     const y = PADT + i * (BAR_H + GAP);
-    const color = e.lang === 'prolog' ? '#4e9af1' : '#f1a94e';
-    const w = e.time !== null ? Math.max(2, (e.time / maxTime) * barW) : 0;
+    const isFastest = e.time !== null && e.time === fastest && valid.length > 1;
 
-    // Etiqueta
-    svg += `<text x="${PADL - 8}" y="${y + BAR_H/2 + 5}" text-anchor="end" font-size="12" fill="#444">${e.label}</text>`;
+    svg += `<text x="${PADL - 8}" y="${y + BAR_H / 2 + 4}" text-anchor="end" font-size="11.5" `
+         + `fill="${isFastest ? 'var(--ink-primary)' : 'var(--ink-secondary)'}" `
+         + `${isFastest ? 'font-weight="650"' : ''}>${e.label}</text>`;
 
     if (e.time !== null) {
-      svg += `<rect x="${PADL}" y="${y}" width="${w}" height="${BAR_H}" fill="${color}" rx="4" opacity=".85"/>`;
-      svg += `<text x="${PADL + w + 6}" y="${y + BAR_H/2 + 5}" font-size="11" fill="#333">${e.time.toFixed(3)} ms</text>`;
+      const w = Math.max(2, xFrac(e.time) * plotW);
+      const color = e.lang === 'prolog' ? 'var(--prolog)' : 'var(--haskell)';
+      svg += `<path class="bar" d="${barPath(PADL, y, w, BAR_H, 4)}" fill="${color}">`
+           + `<title>${e.label}: ${e.time.toFixed(3)} ms</title></path>`;
+      const label = e.time.toFixed(3) + ' ms' + (isFastest ? ` · ★ ${t('fastest')}` : '');
+      svg += `<text x="${PADL + w + 6}" y="${y + BAR_H / 2 + 4}" font-size="10.5" `
+           + `fill="${isFastest ? 'var(--success)' : 'var(--ink-secondary)'}">${label}</text>`;
+    } else if (e.status === 'done') {
+      svg += `<rect x="${PADL}" y="${y + BAR_H / 2 - 1.5}" width="10" height="3" rx="1.5" fill="var(--baseline)"/>`;
+      svg += `<text x="${PADL + 16}" y="${y + BAR_H / 2 + 4}" font-size="10.5" fill="var(--danger)">${t('failedBar')}</text>`;
     } else {
-      svg += `<rect x="${PADL}" y="${y}" width="4" height="${BAR_H}" fill="#ddd" rx="2"/>`;
-      svg += `<text x="${PADL + 10}" y="${y + BAR_H/2 + 5}" font-size="11" fill="#c0392b">FAILED / TIMEOUT</text>`;
+      const key = e.status === 'running' ? 'running' : e.status === 'skipped' ? 'skipped' : 'queued';
+      svg += `<text x="${PADL + 6}" y="${y + BAR_H / 2 + 4}" font-size="10.5" fill="var(--ink-muted)">${t(key)}</text>`;
     }
   });
 
   svg += '</svg>';
-  document.getElementById('bar-chart').innerHTML = svg;
+  chartEl.innerHTML = svg;
 }
 
-function renderStatsTable(results) {
-  const entries = SOLVER_META
-    .map(m => ({ ...m, time: results[m.id]?.success ? results[m.id].time_ms : null }))
-    .filter(e => e.time !== null)
-    .sort((a, b) => a.time - b.time);
+// Barra horizontal con solo el extremo derecho redondeado (anclada al eje)
+function barPath(x, y, w, h, r) {
+  r = Math.min(r, w, h / 2);
+  return `M${x},${y} h${w - r} a${r},${r} 0 0 1 ${r},${r} v${h - 2 * r} a${r},${r} 0 0 1 ${-r},${r} h${-(w - r)} z`;
+}
+
+// ── Tabla de estadísticas ────────────────────────────────────────────────────
+function renderStatsTable() {
+  const entries = successEntries().sort((a, b) => a.time - b.time);
+  const el = document.getElementById('stats-table');
 
   if (entries.length === 0) {
-    document.getElementById('stats-table').innerHTML = '<p style="color:#999;font-size:.85rem">Ningún solver completó con éxito.</p>';
+    el.innerHTML = `<p class="chart-empty">${t('noneSucceeded')}</p>`;
     return;
   }
 
   const slowest = entries[entries.length - 1].time;
-
   let html = `<table>
     <thead><tr>
-      <th>#</th><th>Solver</th><th>Tiempo (ms)</th><th>Speedup vs más lento</th>
+      <th>${t('rank')}</th><th>${t('solverCol')}</th><th>${t('timeCol')}</th><th>${t('speedupCol')}</th>
     </tr></thead><tbody>`;
 
   entries.forEach((e, idx) => {
     const speedup = (slowest / e.time).toFixed(2);
-    const cls = idx === 0 ? ' class="rank-1"' : '';
-    html += `<tr${cls}>
-      <td>${idx + 1}</td>
+    html += `<tr${idx === 0 ? ' class="rank-1"' : ''}>
+      <td>${idx + 1}${idx === 0 ? ' ★' : ''}</td>
       <td>${e.label}</td>
       <td>${e.time.toFixed(4)}</td>
       <td>${speedup}×</td>
     </tr>`;
   });
 
-  html += '</tbody></table>';
-  document.getElementById('stats-table').innerHTML = html;
+  el.innerHTML = html + '</tbody></table>';
 }
 
-// ── Helpers UI ────────────────────────────────────────────────────────────────
+// ── Progreso ─────────────────────────────────────────────────────────────────
+function showProgress(done, solverLabel) {
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('progress-msg').textContent =
+    t('solving', { done: done + 1, total: SOLVER_META.length, solver: solverLabel });
+  document.getElementById('progress-fill').style.width =
+    `${(done / SOLVER_META.length) * 100}%`;
+}
+function hideProgress() {
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('progress-fill').style.width = '0';
+}
+
+// ── Helpers UI ───────────────────────────────────────────────────────────────
 function showError(msg) {
   const el = document.getElementById('error-banner');
   el.textContent = msg;
@@ -578,13 +1042,20 @@ function showError(msg) {
 function hideError() {
   document.getElementById('error-banner').style.display = 'none';
 }
-function showSpinner(visible) {
-  const el = document.getElementById('spinner-wrap');
-  el.style.display = visible ? 'flex' : 'none';
-}
 
-// ── Init ──────────────────────────────────────────────────────────────────────
+// ── Init ─────────────────────────────────────────────────────────────────────
 buildInputGrid();
+applyTheme();
+applyI18n();
+checkBackend();
+
+// Deep-link: ?puzzle=<81 chars> carga un puzzle; &autosolve=1 lo resuelve
+const params = new URLSearchParams(location.search);
+const linked = (params.get('puzzle') || '').replace(/\./g, '0');
+if (/^[0-9]{81}$/.test(linked)) {
+  fillGrid(linked, { lock: true });
+  if (params.get('autosolve') === '1') solveAll();
+}
 </script>
 
 </body>

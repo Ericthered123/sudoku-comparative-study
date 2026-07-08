@@ -21,3 +21,11 @@ cabal.project.local
 cabal.project.local~
 .HTF/
 .ghc.environment.*
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Tooling
+.playwright-mcp/
