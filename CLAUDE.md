@@ -163,6 +163,9 @@ pip install flask flask-cors
 # Iniciar
 python backend/app.py
 # Corre en http://localhost:5000
+
+# Tests del backend (no requieren swipl ni stack)
+python -m pytest backend/test_app.py
 ```
 
 #### Rutas disponibles:
@@ -172,6 +175,7 @@ python backend/app.py
 | `GET` | `/api/health` | Estado de swipl y haskell-exe |
 | `GET` | `/api/puzzles?difficulty=easy` | Lista de puzzles (easy/medium/hard) |
 | `POST` | `/api/solve` | Resolver puzzle con los 6 solvers |
+| `POST` | `/api/solve_one` | Resolver puzzle con un solo solver (`{"puzzle": "...", "solver": "prolog_clp"}`) — usado por el frontend para mostrar resultados en vivo |
 
 Ejemplo de uso:
 ```bash
